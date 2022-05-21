@@ -5,7 +5,7 @@
 /.pnp
 .pnp.js
 test.js
-config.json
+*.json
 
 # testing
 /coverage

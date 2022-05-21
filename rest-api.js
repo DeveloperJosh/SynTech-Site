@@ -5,7 +5,10 @@ const fetch = require('node-fetch');
 const { API_KEY } = require('./config');
 
 app.get('/', function (req, res) {
-    res.send('Hello This is the Syn Rest API');
+    var json = fs.readFileSync("./info.json");
+    var data = JSON.parse(json);
+    res.send(data);
+
 })
 
 app.param('city', function(req, res, next, city) {
