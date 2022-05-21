@@ -19,14 +19,6 @@ app.get('/users', function (req, res) {
     res.send(info.users);
 })
 
-app.get('/image', function (req, res) {
-    //random image
-    var data = fs.readFileSync("data.json");
-    var info = JSON.parse(data);
-    var random = Math.floor(Math.random() * info.images.length);
-    res.send(info.images[random]);
-})
-
 app.listen(process.env.PORT || 3000, function(){
     console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
   });
