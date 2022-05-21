@@ -2,9 +2,9 @@
   "name": "rest-api",
   "version": "1.0.0",
   "description": "",
-  "main": "restapi.js",
+  "main": "rest-api.js",
   "scripts": {
-    "start": "node restapi.js",
+    "start": "node rest-api.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
