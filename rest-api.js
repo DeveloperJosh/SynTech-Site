@@ -1,8 +1,8 @@
 var express = require('express');
 var app = express();
 var fs = require("fs");
-const fetch = require('node-fetch');
-const { API_KEY } = require('./config');
+var fetch = require('node-fetch');
+var { API_KEY } = require('./config');
 
 app.get('/', function (req, res) {
     var json = fs.readFileSync("./info.json");
