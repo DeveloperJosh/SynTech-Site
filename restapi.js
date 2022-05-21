@@ -27,4 +27,5 @@ app.get('/api/v1/users', function (req, res) {
 var server = app.listen(80, function () {
    var host = server.address().address
    var port = server.address().port
+   console.log("pp listening at localhost", host, port)
 })
