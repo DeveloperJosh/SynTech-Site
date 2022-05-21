@@ -24,8 +24,6 @@ app.get('/api/v1/users', function (req, res) {
     res.send(info.users);
 })
 
-var server = app.listen(process.env.PORT || 8080, function () {
-   var host = server.address().address
-   var port = server.address().port
-   console.log(`App listening on http://${host}:${PORT}`)
-})
+app.listen(process.env.PORT || 3000, function(){
+    console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
+  });
