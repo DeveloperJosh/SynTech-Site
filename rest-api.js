@@ -2,6 +2,11 @@ var express = require('express');
 var app = express();
 var fs = require("fs");
 
+app.keys = ['secret'];
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
 app.get('/data', function (req, res) {
     var data = fs.readFileSync("data.json");
     var info = JSON.parse(data);
@@ -13,7 +18,6 @@ app.get('/', function (req, res) {
 })
 
 app.get('/users', function (req, res) {
-    //get all users
     var data = fs.readFileSync("data.json");
     var info = JSON.parse(data);
     res.send(info.users);
