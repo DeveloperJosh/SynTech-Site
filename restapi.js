@@ -1,7 +1,6 @@
 var express = require('express');
 var app = express();
 var fs = require("fs");
-const fetch = require('node-fetch');
 
 app.get('/info', function (req, res) {
     var data = fs.readFileSync("data.json");
