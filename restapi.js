@@ -27,5 +27,4 @@ app.get('/api/v1/users', function (req, res) {
 var server = app.listen(80, function () {
    var host = server.address().address
    var port = server.address().port
-   console.log("Rest app listening at loclhost", host, port)
 })
