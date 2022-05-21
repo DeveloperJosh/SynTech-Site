@@ -1,0 +1,4 @@
+{
+    "MESSAGE": "Hello And Welcome!", 
+    "ENDPOINTS": ["/", "/api/weather/:city"]
+}

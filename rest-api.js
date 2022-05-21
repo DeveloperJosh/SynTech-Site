@@ -2,7 +2,8 @@ var express = require('express');
 var app = express();
 var fs = require("fs");
 var fetch = require('node-fetch');
-var { API_KEY } = require('./config');
+const dotenv = require('dotenv');
+dotenv.config();
 
 app.get('/', function (req, res) {
     var json = fs.readFileSync("./info.json");
@@ -16,7 +17,7 @@ app.param('city', function(req, res, next, city) {
         method: 'GET',
         headers: {
             'X-RapidAPI-Host': 'community-open-weather-map.p.rapidapi.com',
-            'X-RapidAPI-Key': API_KEY
+            'X-RapidAPI-Key': process.env.API_KEY
         }
     };
     
