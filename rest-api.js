@@ -6,9 +6,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 app.get('/', function (req, res) {
-    var json = fs.readFileSync("./info.json");
-    var data = JSON.parse(json);
-    res.send(data);
+    res.send('Info Coming soon!');
 
 })
 
@@ -50,5 +48,3 @@ app.get('/api/weather/:city', function(req, res) {
 app.listen(process.env.PORT || 3000, function(){
     console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
   });
-
-  //dotenv.config();
