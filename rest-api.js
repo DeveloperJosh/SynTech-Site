@@ -29,6 +29,19 @@ app.param('city', function(req, res, next, city) {
     )
 
   });
+
+app.param('image_name', function(req, res, next, image) {
+    fetch(`https://pixabay.com/api/?key=27567224-5780663af5a4ec61d6e6668c4&q=${image}&image_type=photo`).then(response => response.json())
+    .then(data => {
+        // find image
+        var image = data.hits.find(image => image.webformatURL);
+        res.send(image);
+    })
+  });
+
+app.get('/api/image/:image_name', function (req, res) {
+    res.send(req.image_name);
+});
   
 app.get('/api/weather/:city', function(req, res) {
     res.send(req.city);
