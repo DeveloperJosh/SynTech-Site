@@ -33,9 +33,8 @@ app.param('city', function(req, res, next, city) {
 app.param('image_name', function(req, res, next, image) {
     fetch(`https://pixabay.com/api/?key=27567224-5780663af5a4ec61d6e6668c4&q=${image}&image_type=photo`).then(response => response.json())
     .then(data => {
-        // find image
-        var image = data.hits.find(image => image.webformatURL);
-        res.send(image);
+        var random = Math.floor(Math.random() * data.hits.length);
+        res.send(data.hits[random]);
     })
   });
 
