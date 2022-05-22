@@ -31,7 +31,7 @@ app.param('city', function(req, res, next, city) {
   });
 
   app.param('image_name', function(req, res, next, image) {
-    fetch(`https://pixabay.com/api/?key=${process.env.IMAGE_KEY}&q=${image}&image_type=photo`).then(response => response.json())
+    fetch(`https://pixabay.com/api/?key=${process.env.IMAGE_KEY}&q=${image}&image_type=photo&pretty=true`).then(response => response.json())
     .then(data => {
         var random = Math.floor(Math.random() * data.hits.length);
         res.send(data.hits[random]);
