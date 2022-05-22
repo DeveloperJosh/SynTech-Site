@@ -1,12 +1,15 @@
 var express = require('express');
 var app = express();
 var fs = require("fs");
+const path = require('path');
 var fetch = require('node-fetch');
 const dotenv = require('dotenv');
 dotenv.config();
 
 app.get('/', function (req, res) {
-    res.send('Info Coming soon!');
+    res.json({
+        message: 'No API endpoint specified'
+    });
 
 })
 
@@ -23,27 +26,25 @@ app.param('city', function(req, res, next, city) {
     .then(response => response.json())
     .then(data => {
         res.send(data);
-    }
-    )
-
-  });
-
-  app.param('image_name', function(req, res, next, image) {
-    fetch(`https://pixabay.com/api/?key=${process.env.IMAGE_KEY}&q=${image}&image_type=photo&pretty=true`).then(response => response.json())
-    .then(data => {
-        var random = Math.floor(Math.random() * data.hits.length);
-        res.send(data.hits[random]);
     })
   });
-
-app.get('/api/image/:image_name', function (req, res) {
-    res.send(req.image_name);
-});
   
 app.get('/api/weather/:city', function(req, res) {
     res.send(req.city);
 
-});    
+});   
+
+app.get('/api/porn', function (req, res) {
+    fetch('https://nekobot.xyz/api/image?type=blowjob')
+    .then(response => response.json())
+    .then(data => {
+        const image = data['message']
+        res.json({
+            "url": image
+        }) 
+    })
+  });
+
 
 app.listen(process.env.PORT || 3000, function(){
     console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
