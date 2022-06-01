@@ -6,6 +6,10 @@ const mongoose = require('mongoose');
 const EmailSchema = require('./models/login');
 var cookieSession = require('cookie-session')
 
+/// TODO:
+/// - add user delete functionality
+/// - make an admin page
+
 require('dotenv').config();
 
 function makeid(length) {
@@ -17,6 +21,10 @@ function makeid(length) {
  charactersLength));
    }
    return result;
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 let url = process.env.URL
@@ -69,6 +77,12 @@ router.post('/login', function(req, res) {
     })
 });
 
+router.get('/logout', function(req, res) {
+    /// clear session
+    req.session = null;
+    res.redirect('/');
+});
+
 
 router.get('/register', function(req, res) {
     res.sendFile(path.join(__dirname + '/html/register.html'));
@@ -117,6 +131,44 @@ router.get('/dashboard', function(req, res) {
     } else {
         res.redirect('/login');
     }
+});
+
+router.get('/forget', function(req, res) {
+    res.sendFile(path.join(__dirname + '/html/forget.html'));
+});
+
+router.post('/forget', function(req, res) {
+    var email = req.body.email;
+    var password = req.body.password;
+    var new_password = req.body.new_password;
+    EmailSchema.findOne({
+        _id: email,
+        password: password
+    }, function(err, user) {
+        if (err) {
+            console.log(err);
+            res.send('Error');
+        } else {
+            if (user) {
+                EmailSchema.updateOne({
+                    _id: email
+                }, {
+                    $set: {
+                        password: new_password
+                    }
+                }, function(err) {
+                    if (err) {
+                        console.log(err);
+                        res.send('Error');
+                    } else {
+                        res.redirect('/login');
+                    }
+                });
+            } else {
+                res.send('Error');
+            }
+        }
+    })
 });
 
 
