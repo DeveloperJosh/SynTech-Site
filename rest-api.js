@@ -39,7 +39,16 @@ var sess = {
   app.use(session(sess))
 
 router.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + '/html/index.html'));
+    /// start a session
+    req.session.save(function(err) {
+        if (err) {
+            console.log(err)
+        }
+        else {
+            console.log('session saved')
+            res.sendFile(path.join(__dirname + '/html/index.html'));
+        }
+    })
 });
 
 router.get('/login', function(req, res) {
