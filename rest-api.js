@@ -64,6 +64,34 @@ router.post('/login', function(req, res) {
     });
 });
 
+router.get('/forget', function(req, res) {
+    res.sendFile(path.join(__dirname + '/html/forgot.html'));
+});
+
+router.post('/forget', function(req, res) {
+    /// check if email exists
+    /// then get new password
+    /// send email with new password
+    var email = req.body.email;
+    var password = req.body.password;
+    var new_password = req.body.new_password;
+    EmailSchema.findOne({
+        email: email,
+        password: password
+    }, function(err, email) {
+        if (err) {
+            console.log(err);
+        } else if (email) {
+            email.password = new_password;
+            email.save();
+            console.log('Password changed');
+            res.redirect('/login');
+        } else {
+            res.redirect('/forgot');
+        }
+    }) 
+});
+
 router.delete('/delete', function(req, res) {
     if (req.session.email) {
         req.session.destroy();
@@ -103,6 +131,7 @@ router.post('/register', function(req, res) {
     });
     user.save(function(err) {
         if (err) {
+            res.redirect('/register');
             console.log(err);
         } else {
             res.redirect('/login');

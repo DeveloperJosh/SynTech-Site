@@ -23,6 +23,10 @@
             xhttp.send();
             window.location.href = "/";
         }
+
+        function new_password() {
+            window.location.href = "/forget";
+        }
     </script>
 </head>
 <body class="bg-secondary">
@@ -58,10 +62,7 @@
                 <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
                     <p>
                         <strong>Email:</strong>
-                        <span id="email" class="text-warning"></span>
-                        <script>
-                            ShowEmail();
-                        </script>
+                        <span id="email" class="text-warning">Not working atm</span>
                     </p>
                     <p>
                         <strong>Account Type:</strong>
@@ -81,8 +82,8 @@
                 </div>
                 <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
                     <p>
-                        <strong>Remember Me:</strong>
-                        <button type="button" class="btn btn-primary" id="keep_me_logged_in" onclick="keep_me_logged_in()">Remember Me</button>
+                        <strong>Change Password:</strong>
+                        <button type="button" class="btn btn-danger" onclick="new_password()">Change Password</button>
                     </p>
                     <p>
                         <strong>Logout Account:</strong>
