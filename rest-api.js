@@ -3,7 +3,7 @@ var app = express();
 const path = require('path');
 const router = express.Router();
 var session = require('express-session')
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
 const EmailSchema = require('./models/login');
 require('dotenv').config();
