@@ -2,11 +2,23 @@ var express = require('express');
 var app = express();
 const path = require('path');
 const router = express.Router();
-var session = require('express-session')
-const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
 const EmailSchema = require('./models/login');
+var cookieSession = require('cookie-session')
+
 require('dotenv').config();
+
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * 
+ charactersLength));
+   }
+   return result;
+}
+
 let url = process.env.URL
 mongoose.connect(url, {
     useNewUrlParser: true,
@@ -17,38 +29,19 @@ mongoose.connect(url, {
     console.log('Unable to connect to MongoDB Database.\nError: ' + err)
 })
 
-app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'html'));
+app.set('trust proxy', 1) // trust first proxy
+
+app.use(cookieSession({
+  name: 'session',
+  keys: [makeid(32)],
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
 app.use(express.urlencoded({
     extended: true
 })) 
-
-var sess = {
-    secret: 'kfhiguydsgdfuyegudfudgsaugd67236467327',
-    cookie: {},
-    resave: false,
-    saveUninitialized: true
-  }
-  
-  if (app.get('env') === 'production') {
-    app.set('trust proxy', 1) // trust first proxy
-    sess.cookie.secure = true // serve secure cookies
-  }
-  
-  app.use(session(sess))
-
 router.get('/', function(req, res) {
-    /// start a session
-    req.session.save(function(err) {
-        if (err) {
-            console.log(err)
-        }
-        else {
-            console.log('session saved')
-            req.session.ip = req.ip
-            res.sendFile(path.join(__dirname + '/html/index.html'));
-        }
-    })
+    res.sendFile(path.join(__dirname + '/html/index.html'));
 });
 
 router.get('/login', function(req, res) {
@@ -56,113 +49,83 @@ router.get('/login', function(req, res) {
 });
 
 router.post('/login', function(req, res) {
-    /// check if user exists
-    // save email to session
-    // redirect to dashboard
-    var email = req.body.email;
-    EmailSchema.findOne({
-        email: email,
-        password: req.body.password
-    }, function(err, email) {
-        if (err) {
-            console.log(err);
-        } else if (email) {
-            req.session.regenerate (function(err) {
-                if (err) {
-                    console.log(err);
-                }
-                req.session.email = email;
-                res.redirect('/dashboard');
-            });
-        } else {
-            res.redirect('/login');
-        }
-    });
-});
-
-router.get('/forget', function(req, res) {
-    res.sendFile(path.join(__dirname + '/html/forget.html'));
-});
-
-router.post('/forget', function(req, res) {
-    /// check if email exists
-    /// then get new password
-    /// send email with new password
-    var email = req.body.email;
-    var password = req.body.password;
-    var new_password = req.body.new_password;
+    let email = req.body.email;
+    let password = req.body.password;
     EmailSchema.findOne({
         email: email,
         password: password
-    }, function(err, email) {
+    }, function(err, user) {
         if (err) {
             console.log(err);
-        } else if (email) {
-            email.password = new_password;
-            email.save();
-            console.log('Password changed');
-            res.redirect('/login');
+            res.send('Error');
         } else {
-            res.redirect('/forget');
-        }
-    }) 
-});
-
-router.delete('/delete', function(req, res) {
-    if (req.session.email) {
-        req.session.destroy();
-        EmailSchema.deleteOne({
-            email: req.body.email
-        }, function(err) {
-            if (err) {
-                console.log(err);
+            if (user) {
+                req.session.user = user;
+                res.redirect('/dashboard');
             } else {
-                res.redirect('/');
+                res.send('Error');
             }
-        })
-    } else {
-        res.redirect('/login');
-    }
-});
-
-
-
-router.get('/logout', function(req, res) {
-    req.session.destroy(function(err) {
-        if (err) {
-            console.log(err);
         }
-        res.redirect('/');
     })
 });
+
 
 router.get('/register', function(req, res) {
     res.sendFile(path.join(__dirname + '/html/register.html'));
 });
 
 router.post('/register', function(req, res) {
-    var user = new EmailSchema({
-        _id: req.body.email,
-        password: req.body.password
-    });
-    user.save(function(err) {
+    let email = req.body.email;
+    let password = req.body.password;
+    let confirmPassword = req.body.confirm_password;
+
+    /// check if email already exists
+    EmailSchema.findOne({
+        _id: email
+    }, function(err, user) {
         if (err) {
-            res.redirect('/register');
             console.log(err);
+            res.send('Error: ' + err);
         } else {
-            res.redirect('/login');
+            if (user) {
+                res.send('Email already exists');
+            } else {
+                if (password === confirmPassword) {
+                    let newUser = new EmailSchema({
+                        _id: email,
+                        password: password
+                    });
+                    newUser.save(function(err) {
+                        if (err) {
+                            console.log(err);
+                            res.send('Error: ' + err);
+                        } else {
+                            res.send('Successfully registered');
+                        }
+                    });
+                } else {
+                    res.send('Passwords do not match');
+                }
+            }
         }
     })
-});
+}); 
 
 router.get('/dashboard', function(req, res) {
-    if (req.session.email ) {
+    if (req.session.user) {
         res.sendFile(path.join(__dirname + '/html/dashboard.html'));
     } else {
-        console.log('User not logged in');
         res.redirect('/login');
     }
 });
+
+
+router.get('/info', function(req, res) {
+    // show session info
+    console.log(req.session);
+    res.send(req.session.user);
+});
+
 
 app.use('/', router);
 app.listen(process.env.PORT || 3000, function(){

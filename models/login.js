@@ -10,5 +10,6 @@ const reqString = {
 const EmailSchema = new mongoose.Schema({
     _id: reqString, // email
     password: reqString,
+
 })
 module.exports = mongoose.model('login', EmailSchema)
