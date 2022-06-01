@@ -3,6 +3,7 @@ var app = express();
 const path = require('path');
 const router = express.Router();
 var session = require('express-session')
+const MongoStore = require('connect-mongo')(session);
 const mongoose = require('mongoose');
 const EmailSchema = require('./models/login');
 require('dotenv').config();
@@ -24,6 +25,7 @@ app.use(express.urlencoded({
 
 var sess = {
     secret: 'kfhiguydsgdfuyegudfudgsaugd67236467327',
+    store: MongoStore.create({ mongoUrl: url }),
     cookie: {},
     resave: false,
     saveUninitialized: true
