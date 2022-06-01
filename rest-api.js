@@ -25,7 +25,6 @@ app.use(express.urlencoded({
 
 var sess = {
     secret: 'kfhiguydsgdfuyegudfudgsaugd67236467327',
-    store: MongoStore.create({ mongoUrl: url }),
     cookie: {},
     resave: false,
     saveUninitialized: true
