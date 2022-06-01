@@ -65,7 +65,7 @@ router.post('/login', function(req, res) {
 });
 
 router.get('/forget', function(req, res) {
-    res.sendFile(path.join(__dirname + '/html/forgot.html'));
+    res.sendFile(path.join(__dirname + '/html/forget.html'));
 });
 
 router.post('/forget', function(req, res) {
