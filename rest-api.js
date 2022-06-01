@@ -58,8 +58,13 @@ router.post('/login', function(req, res) {
         if (err) {
             console.log(err);
         } else if (email) {
-            req.session.email = email;
-            res.redirect('/dashboard');
+            req.session.regenerate (function(err) {
+                if (err) {
+                    console.log(err);
+                }
+                req.session.email = email.email;
+                res.redirect('/dashboard');
+            });
         } else {
             res.redirect('/login');
         }
