@@ -87,7 +87,7 @@ router.post('/forget', function(req, res) {
             console.log('Password changed');
             res.redirect('/login');
         } else {
-            res.redirect('/forgot');
+            res.redirect('/forget');
         }
     }) 
 });
