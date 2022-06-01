@@ -46,6 +46,7 @@ router.get('/', function(req, res) {
         }
         else {
             console.log('session saved')
+            req.session.ip = req.ip
             res.sendFile(path.join(__dirname + '/html/index.html'));
         }
     })
