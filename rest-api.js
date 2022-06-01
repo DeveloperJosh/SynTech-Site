@@ -62,7 +62,7 @@ router.post('/login', function(req, res) {
                 if (err) {
                     console.log(err);
                 }
-                req.session.email = email.email;
+                req.session.email = email;
                 res.redirect('/dashboard');
             });
         } else {
