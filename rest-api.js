@@ -5,6 +5,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const EmailSchema = require('./models/login');
 const blogSchema = require('./models/blog');
+const devModeSchema = require('./models/devmode');
 var cookieSession = require('cookie-session')
 
 /// TODO:
@@ -47,13 +48,47 @@ app.use(cookieSession({
 app.use(express.urlencoded({
     extended: true
 })) 
+
+// make a mongo check for dev mode
+function devModeCheck(req, res, next) {
+    /// check if dev mode is on and check if dev mode exists
+    devModeSchema.findOne({
+        _id: req.hostname
+        /// if dev mode does not exist, create it then redirect and check if dev mode is true
+    }, (err, devMode) => {
+        if (err) {
+            console.log(err)
+        } else if (devMode) {
+            if (devMode.dev_mode) {
+                res.render('devmode.html')
+            } else {
+                next()
+            }
+        } else {
+            /// create dev mode
+            const newDevMode = new devModeSchema({
+                _id: req.hostname,
+                dev_mode: false
+            })
+            newDevMode.save()
+            res.redirect('/')
+        }
+    })
+}
+
 router.get('/', function(req, res) {
-    res.render('index.html')
-});
+    /// run dev mode check
+    devModeCheck(req, res, () => {
+        /// render the index page
+        res.render('index.html')
+    })
+})
 
 /// making a blog page
 router.get('/blog', function(req, res) {
-    res.render('blog.html')
+    devModeCheck(req, res, () => {
+        res.render('blog.html')
+    })
 });
 
 router.post('/blog', function(req, res) {
@@ -92,7 +127,9 @@ router.delete('/blog/:id', function(req, res) {
 })
 
 router.get('/login', function(req, res) {
-    res.render('login.html')
+    devModeCheck(req, res, () => {
+        res.render('login.html')
+    })
 });
 
 router.post('/login', function(req, res) {
@@ -124,7 +161,9 @@ router.get('/logout', function(req, res) {
 
 
 router.get('/register', function(req, res) {
-    res.render('register.html')
+    devModeCheck(req, res, () => {
+        res.render('register.html')
+    })
 });
 
 router.post('/register', function(req, res) {
@@ -193,7 +232,9 @@ router.get('/admin', function(req, res) {
     
 
 router.get('/forget', function(req, res) {
-    res.render('forget.html')
+    devModeCheck(req, res, () => {
+        res.render('forget.html')
+    })
 });
 
 router.post('/forget', function(req, res) {
