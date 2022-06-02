@@ -9,7 +9,6 @@ const reqString = {
 }
 const updatePasswordSchema = new mongoose.Schema({
     _id: reqString, // email
-    email: reqString,
     password: reqString,
 })
 module.exports = mongoose.model('updatePassword', updatePasswordSchema)

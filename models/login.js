@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose')
 
-/// mongo login model
+/// mongo logins model
 
 const reqString = {
     type: String,
@@ -10,6 +10,10 @@ const reqString = {
 const EmailSchema = new mongoose.Schema({
     _id: reqString, // email
     password: reqString,
+    admin: {
+        type: Boolean,
+        default: false
+    }
 
 })
-module.exports = mongoose.model('login', EmailSchema)
+module.exports = mongoose.model('logins', EmailSchema)

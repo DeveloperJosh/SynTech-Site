@@ -4,6 +4,7 @@ const path = require('path');
 const router = express.Router();
 const mongoose = require('mongoose');
 const EmailSchema = require('./models/login');
+const blogSchema = require('./models/blog');
 var cookieSession = require('cookie-session')
 
 /// TODO:
@@ -23,10 +24,6 @@ function makeid(length) {
    return result;
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 let url = process.env.URL
 mongoose.connect(url, {
     useNewUrlParser: true,
@@ -38,6 +35,7 @@ mongoose.connect(url, {
 })
 
 app.set('views', path.join(__dirname, 'html'));
+app.engine('html', require('ejs').renderFile);
 app.set('trust proxy', 1) // trust first proxy
 
 app.use(cookieSession({
@@ -49,11 +47,43 @@ app.use(express.urlencoded({
     extended: true
 })) 
 router.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + '/html/index.html'));
+    res.render('index.html')
 });
 
+/// making a blog page
+router.get('/blog', function(req, res) {
+    res.render('blog.html')
+});
+
+router.post('/blog', function(req, res) {
+    const blog = new blogSchema({
+        _id: makeid(32),
+        title: req.body.title,
+        body: req.body.body,
+        author: req.session.user,
+        date: new Date().toLocaleString(),
+        comments: []
+    })
+    blog.save().then(() => {
+        res.redirect('/blog')
+    }
+    ).catch((err) => {
+        console.log(err)
+    })
+})
+
+router.get('/blog/all', function(req, res) {
+    blogSchema.find().then((blogs) => {
+        res.send(blogs)
+    }).catch((err) => {
+        console.log(err)
+    })
+})
+
+
+
 router.get('/login', function(req, res) {
-    res.sendFile(path.join(__dirname + '/html/login.html'));
+    res.render('login.html')
 });
 
 router.post('/login', function(req, res) {
@@ -85,7 +115,7 @@ router.get('/logout', function(req, res) {
 
 
 router.get('/register', function(req, res) {
-    res.sendFile(path.join(__dirname + '/html/register.html'));
+    res.render('register.html')
 });
 
 router.post('/register', function(req, res) {
@@ -107,14 +137,15 @@ router.post('/register', function(req, res) {
                 if (password === confirmPassword) {
                     let newUser = new EmailSchema({
                         _id: email,
-                        password: password
+                        password: password,
+                        admin: false
                     });
                     newUser.save(function(err) {
                         if (err) {
                             console.log(err);
                             res.send('Error: ' + err);
                         } else {
-                            res.send('Successfully registered');
+                            res.redirect('/login');
                         }
                     });
                 } else {
@@ -127,14 +158,33 @@ router.post('/register', function(req, res) {
 
 router.get('/dashboard', function(req, res) {
     if (req.session.user) {
-        res.sendFile(path.join(__dirname + '/html/dashboard.html'));
+        res.render('dashboard.html')
     } else {
         res.redirect('/login');
     }
 });
 
+router.get('/admin', function(req, res) {
+    EmailSchema.findOne({
+        _id: req.session.user,
+        admin: true
+    }, function(err, user) {
+        if (err) {
+            console.log(err);
+            res.send('Error: ' + err);
+        } else {
+            if (user) {
+                res.render('admin.html')
+            } else {
+                res.send('Error: You are not an admin');
+            }
+        }
+    })
+});
+    
+
 router.get('/forget', function(req, res) {
-    res.sendFile(path.join(__dirname + '/html/forget.html'));
+    res.render('forget.html')
 });
 
 router.post('/forget', function(req, res) {
