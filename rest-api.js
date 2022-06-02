@@ -229,7 +229,30 @@ router.get('/admin', function(req, res) {
         }
     })
 });
-    
+
+router.get('/admin/login', function(req, res) {    
+    res.render('admin_login.html')
+});
+
+router.post('/admin/login', function(req, res) {
+    /// check if email has admin rights
+    EmailSchema.findOne({
+        _id: req.body.email,
+        admin: true
+    }, function(err, user) {
+        if (err) {
+            console.log(err);
+            res.send('Error: ' + err);
+        } else {
+            if (user) {
+                req.session.user = user;
+                res.redirect('/admin');
+            } else {
+                res.send('Error: You are not an admin');
+            }
+        }
+    })
+});
 
 router.get('/forget', function(req, res) {
     devModeCheck(req, res, () => {
@@ -270,7 +293,6 @@ router.post('/forget', function(req, res) {
         }
     })
 });
-
 
 router.get('/info', function(req, res) {
     // show session info
