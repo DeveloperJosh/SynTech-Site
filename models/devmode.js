@@ -1,7 +1,4 @@
-
 const mongoose = require('mongoose')
-
-/// update password model
 
 const reqString = {
     type: String,
