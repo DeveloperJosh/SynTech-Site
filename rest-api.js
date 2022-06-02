@@ -37,6 +37,7 @@ mongoose.connect(url, {
 app.set('views', path.join(__dirname, 'html'));
 app.engine('html', require('ejs').renderFile);
 app.set('trust proxy', 1) // trust first proxy
+app.use(express.static(__dirname + '/public'));
 
 app.use(cookieSession({
   name: 'session',
@@ -80,7 +81,15 @@ router.get('/blog/all', function(req, res) {
     })
 })
 
-
+router.delete('/blog/:id', function(req, res) {
+    blogSchema.deleteOne({
+        _id: req.params.id
+    }).then(() => {
+        res.send('deleted')
+    }).catch((err) => {
+        console.log(err)
+    })
+})
 
 router.get('/login', function(req, res) {
     res.render('login.html')
