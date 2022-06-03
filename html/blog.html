@@ -45,17 +45,24 @@
                     type: 'GET',
                     success: function(data) {
                       console.log(data);
+
+                      /// check if data is empty
+                      if(data.length == 0) {
+                        $('#posts').append('<div class="col-sm-12"><h1 class="text-center text-white fs-10">No Posts Yet</h1></div>');
+                      }
+
                       for (var i = 0; i < data.length; i++) {
                         $('#posts').append(
                             /// make a black card with the post title and the post content
                             '<div class="card bg-dark text-white">' +
-                                '<div class="card-header row">' +
+                                '<div class="card-header">' +
                                     '<h3>' + data[i].title + '</h3>' +
                                 '</div>' +
                                 '<div class="card-body">' +
                                     '<p class="card-text">' + data[i].body + '</p>' +
                                 '</div>' +
-                                '<small>Id: ' + data[i]._id + '</small>' +
+                                '<small>Made on: ' + data[i].date + '</small>' +
+                                '<small>By: ' + data[i].author + '</small>' +
                             '</div>' +
                             '<br>'
                         );

@@ -28,16 +28,16 @@
     </nav>
     <br>
     <div class="container">
-        <form action="/blog" method="POST">
+        <form method="POST" action="/blog">
             <div class="form-group">
                 <label for="title">Title</label>
-                <input type="text" class="form-control" id="title" name="title" placeholder="Title">
+                <input type="text" class="form-control" id="title" name="title" placeholder="Title" required>
             </div>
             <div class="form-group">
                 <label for="content">Body</label>
-                <textarea class="form-control" id="body" name="body" rows="3" placeholder="Text for blog"></textarea>
+                <textarea class="form-control" id="body" name="body" rows="3" placeholder="Text for blog" required></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Post</button>
         </form>
     </div>
 </body>
