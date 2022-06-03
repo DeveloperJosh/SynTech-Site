@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const EmailSchema = require('./models/login');
 const blogSchema = require('./models/blog');
 const devModeSchema = require('./models/devmode');
-var cookieSession = require('cookie-session')
+var cookieSession = require('cookie-session');
 
 /// TODO:
 /// - add user delete functionality
@@ -96,7 +96,7 @@ router.post('/blog', function(req, res) {
         _id: makeid(32),
         title: req.body.title,
         body: req.body.body,
-        author: req.session.user,
+        author: req.session.user.username,
         date: new Date().toLocaleString(),
         comments: []
     })
@@ -145,6 +145,8 @@ router.post('/login', function(req, res) {
         } else {
             if (user) {
                 req.session.user = user;
+                /// set session age to 24 hours
+                req.session.maxAge = 24 * 60 * 60 * 1000;
                 res.redirect('/dashboard');
             } else {
                 res.send('Error');
@@ -154,7 +156,7 @@ router.post('/login', function(req, res) {
 });
 
 router.get('/logout', function(req, res) {
-    /// clear session
+    /// delete the session
     req.session = null;
     res.redirect('/');
 });
@@ -168,9 +170,9 @@ router.get('/register', function(req, res) {
 
 router.post('/register', function(req, res) {
     let email = req.body.email;
+    let username = req.body.username;
     let password = req.body.password;
     let confirmPassword = req.body.confirm_password;
-
     /// check if email already exists
     EmailSchema.findOne({
         _id: email
@@ -185,6 +187,7 @@ router.post('/register', function(req, res) {
                 if (password === confirmPassword) {
                     let newUser = new EmailSchema({
                         _id: email,
+                        username: username,
                         password: password,
                         admin: false
                     });
@@ -193,7 +196,8 @@ router.post('/register', function(req, res) {
                             console.log(err);
                             res.send('Error: ' + err);
                         } else {
-                            res.redirect('/login');
+                            req.session.user = newUser;
+                            res.redirect('/dashboard');
                         }
                     });
                 } else {
@@ -206,7 +210,9 @@ router.post('/register', function(req, res) {
 
 router.get('/dashboard', function(req, res) {
     if (req.session.user) {
-        res.render('dashboard.html')
+        devModeCheck(req, res, () => {
+         res.render('dashboard.html')
+    })
     } else {
         res.redirect('/login');
     }
@@ -298,6 +304,15 @@ router.get('/info', function(req, res) {
     // show session info
     console.log(req.session);
     res.send(req.session.user);
+});
+
+
+//// geting email
+router.get('/getemail', function(req, res) {
+    /// get email from session json
+    email = req.session.user;
+    email = email._id;
+    res.send(email);
 });
 
 
