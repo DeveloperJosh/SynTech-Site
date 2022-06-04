@@ -7,11 +7,39 @@ const EmailSchema = require('./models/login');
 const blogSchema = require('./models/blog');
 const devModeSchema = require('./models/devmode');
 var cookieSession = require('cookie-session');
+const nodemailer = require('nodemailer');
 
 /// TODO:
 /// - add user delete functionality
 /// - make an admin page
 /// - Add email sending on login
+
+/// set up email sending
+var mailConfig;
+if (process.env.NODE_ENV === 'production' ){
+    // all emails are delivered to destination
+    mailConfig = {
+        host: process.env.MAIL_HOST,
+        port: 465,
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    };
+} else {
+    // fake email delivery
+    mailConfig = {
+        host: 'smtp.ethereal.email',
+        port: 587,
+        auth: {
+            user: 'verner.brakus95@ethereal.email',
+            pass: '1hu7bRGbJr6Tt5mrTh'
+        }
+    };
+}
+let transporter = nodemailer.createTransport(mailConfig);
+
+
 
 require('dotenv').config();
 function makeid(length) {
@@ -149,6 +177,19 @@ router.post('/login', function(req, res) {
                     /// set session
                     req.session.user = user
                     res.redirect('/dashboard')
+                    transporter.sendMail({
+                        from: '"Syntech" <support@syntech.dev>',
+                        to: user._id,
+                        subject: 'Login Notification',
+                        text: "You have successfully logged in to Syntech, If you where not the one who logged in, please contact us",
+                        html: "<p>You have successfully logged in to Syntech, If you where not the one who logged in, please contact us</p>"
+                    }, (err, info) => {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            console.log("Sent email")
+                        }
+                    })
                     /// email about a login being detected
                 } else {
                     /// password does not match
