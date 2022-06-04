@@ -187,7 +187,7 @@ router.post('/register', function(req, res) {
     let email = req.body.email;
     let username = req.body.username;
     let password = req.body.password;
-    let confirmPassword = req.body.confirm_password;
+    let confirmPassword = req.body.confirmPassword;
     /// check if email already exists
     EmailSchema.findOne({
         _id: email
