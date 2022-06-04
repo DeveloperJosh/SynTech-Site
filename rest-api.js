@@ -154,14 +154,14 @@ router.post('/login', function(req, res) {
                 } else {
                     /// password does not match
                     /// redirect to login page
-                    console.log('password does not match')
                     res.redirect('/login')
+                    console.log('password does not match')
                 }
             } else {
                 /// email does not exist
                 /// redirect to login page
-                console.log('email does not exist')
                 res.redirect('/login')
+                console.log('email does not exist')
             }
         })
     } else {
