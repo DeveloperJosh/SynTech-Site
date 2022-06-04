@@ -8,6 +8,9 @@
     <meta name="author" content="SynTech Blogs">
     <!---Bootstrap CSS from file-->
     <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css" />
+    <!---Custom CSS from file-->
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="icon" href="images/logo.png">
 </html>
 <script src="bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -60,21 +63,21 @@
                   // box class
                   '<div class="col-sm-12">' +
                     // article class
-                    '<article class="card">' +
+                    '<article class="card" style="background-color: #202422">' +
                       // header class
                       '<header class="card-header">' +
                         // title class
-                        '<h1 class="card-title text-center">' + data[i].title + '</h1>' +
+                        '<h1 class="card-title text-center text-white">' + data[i].title + '</h1>' +
                       '</header>' +
                       // body class
                       '<div class="card-body">' +
                         // body text class
-                        '<p class="card-text">' + data[i].body + '</p>' +
+                        '<p class="card-text text-center text-white">' + data[i].body + '</p>' +
                       '</div>' +
                       // footer class
                       '<footer class="card-footer">' +
                         // footer text class
-                        '<p class="card-text">' + data[i].author + '</p>' +
+                        '<p class="card-text text-center text-white">' + data[i].author + '</p>' +
                       '</footer>' +
                     '</article>' +
                   '</div>' +
