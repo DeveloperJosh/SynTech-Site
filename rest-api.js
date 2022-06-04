@@ -7,12 +7,34 @@ const EmailSchema = require('./models/login');
 const blogSchema = require('./models/blog');
 const devModeSchema = require('./models/devmode');
 var cookieSession = require('cookie-session');
+const sgMail = require('@sendgrid/mail')
 
 /// TODO:
 /// - add user delete functionality
 /// - make an admin page
+/// - Add email sending on login
 
 require('dotenv').config();
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+
+function email_send(email, subject, body) {
+    const msg = {
+        to: email,
+        from: 'bam0909@outlook.com',
+        subject: subject,
+        text: body,
+        html: `<strong>${body}</strong>`,
+      }
+      sgMail
+        .send(msg)
+        .then(() => {
+          console.log('Email sent')
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    }
 
 function makeid(length) {
     var result           = '';
@@ -134,10 +156,8 @@ router.get('/login', function(req, res) {
 
 router.post('/login', function(req, res) {
     let email = req.body.email;
-    let password = req.body.password;
     EmailSchema.findOne({
-        email: email,
-        password: password
+        email: email
     }, function(err, user) {
         if (err) {
             console.log(err);
@@ -147,6 +167,7 @@ router.post('/login', function(req, res) {
                 /// make a new session for every user
                 req.session.user = user;
                 res.redirect('/dashboard');
+                email_send(user.email, 'Welcome to the blog', 'Welcome to the blog')
             } else {
                 res.send('Error');
             }
