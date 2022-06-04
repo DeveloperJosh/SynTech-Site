@@ -20,7 +20,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 function email_send(email, subject, body) {
     const msg = {
-        to: email,
+        to: `${email}`,
         from: 'bam0909@outlook.com',
         subject: subject,
         text: body,
