@@ -144,9 +144,8 @@ router.post('/login', function(req, res) {
             res.send('Error');
         } else {
             if (user) {
+                /// make a new session for every user
                 req.session.user = user;
-                /// set session age to 24 hours
-                req.session.maxAge = 24 * 60 * 60 * 1000;
                 res.redirect('/dashboard');
             } else {
                 res.send('Error');
