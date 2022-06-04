@@ -7,7 +7,6 @@ const EmailSchema = require('./models/login');
 const blogSchema = require('./models/blog');
 const devModeSchema = require('./models/devmode');
 var cookieSession = require('cookie-session');
-const nodemailer = require('nodemailer');
 
 /// TODO:
 /// - add user delete functionality
@@ -15,6 +14,7 @@ const nodemailer = require('nodemailer');
 /// - Add email sending on login
 
 require('dotenv').config();
+
 function makeid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -25,6 +25,15 @@ function makeid(length) {
    }
    return result;
 }
+
+app.use(cookieSession({
+    name: 'session',
+    keys: [makeid(32)],
+  }))
+  app.use(express.urlencoded({
+      extended: true
+  })) 
+  
 
 let url = process.env.URL
 mongoose.connect(url, {
@@ -40,14 +49,6 @@ app.set('views', path.join(__dirname, 'html'));
 app.engine('html', require('ejs').renderFile);
 app.set('trust proxy', 1) // trust first proxy
 app.use(express.static(__dirname + '/public'));
-
-app.use(cookieSession({
-  name: 'session',
-  keys: [makeid(32)],
-}))
-app.use(express.urlencoded({
-    extended: true
-})) 
 
 // make a mongo check for dev mode
 function devModeCheck(req, res, next) {
@@ -150,7 +151,6 @@ router.post('/login', function(req, res) {
                     /// set session
                     req.session.user = user
                     res.redirect('/dashboard')
-                    /// email about a login being detected
                 } else {
                     /// password does not match
                     /// redirect to login page
