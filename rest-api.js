@@ -315,6 +315,12 @@ router.get('/getemail', function(req, res) {
     res.send(email);
 });
 
+router.get('/username', function(req, res) {
+    /// get username from session json
+    username = req.session.user;
+    username = username.username;
+    res.send(username);
+});
 
 app.use('/', router);
 app.listen(process.env.PORT || 3000, function(){
