@@ -65,7 +65,6 @@ app.use(express.static(__dirname + '/public'));
 app.use(cookieSession({
   name: 'session',
   keys: [makeid(32)],
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
 app.use(express.urlencoded({
     extended: true
@@ -156,23 +155,40 @@ router.get('/login', function(req, res) {
 
 router.post('/login', function(req, res) {
     let email = req.body.email;
-    EmailSchema.findOne({
-        email: email
-    }, function(err, user) {
-        if (err) {
-            console.log(err);
-            res.send('Error');
-        } else {
-            if (user) {
-                /// make a new session for every user
-                req.session.user = user;
-                res.redirect('/dashboard');
-                email_send(user.email, 'Welcome to the blog', 'Welcome to the blog')
+    /// email provided
+    if (email) {
+        /// check if email exists
+        EmailSchema.findOne({
+            _id: email
+        }, (err, user) => {
+            if (err) {
+                console.log(err)
+            } else if (user) {
+                /// email exists
+                /// check if password matches
+                if (user.password === req.body.password) {
+                    /// password matches
+                    /// set session
+                    req.session.user = user
+                    res.redirect('/')
+                    /// email about a login being detected
+                    email_send(user.email, 'Login Detected', `Someone Loggined in with your email: ${user.email}\nif this is not you please contact the admin\nIp: ${req.ip}`)
+                } else {
+                    /// password does not match
+                    /// redirect to login page
+                    res.redirect('/login')
+                }
             } else {
-                res.send('Error');
+                /// email does not exist
+                /// redirect to login page
+                res.redirect('/login')
             }
-        }
-    })
+        })
+    } else {
+        /// email not provided
+        /// redirect to login page
+        res.redirect('/login')
+    }
 });
 
 router.get('/logout', function(req, res) {
