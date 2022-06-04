@@ -151,23 +151,9 @@ router.post('/login', function(req, res) {
                     /// set session
                     req.session.user = user
                     res.redirect('/dashboard')
-                } else {
-                    /// password does not match
-                    /// redirect to login page
-                    res.redirect('/login')
-                    console.log('password does not match')
                 }
-            } else {
-                /// email does not exist
-                /// redirect to login page
-                res.redirect('/login')
-                console.log('email does not exist')
             }
         })
-    } else {
-        /// email not provided
-        /// redirect to login page
-        res.redirect('/login')
     }
 });
 
