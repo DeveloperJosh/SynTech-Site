@@ -81,7 +81,6 @@ router.get('/', function(req, res) {
     /// run dev mode check
     devModeCheck(req, res, () => {
         /// render the index page
-        req.session == "start"
         res.render('index.html')
     })
 })
@@ -146,23 +145,24 @@ router.post('/login', function(req, res) {
                 console.log(err)
             } else if (user) {
                 /// email exists
-                /// check if password matches
+                /// check if password is correct
                 if (user.password === req.body.password) {
-                    res.sea
+                    /// password is correct
+                    /// set session
+                    req.session.user = user
                     res.redirect('/dashboard')
-                }  else {
-                    /// password does not match
-                    /// redirect to login page
+                } else {
+                    /// password is incorrect
                     res.redirect('/login')
-                    console.log('password does not match')
                 }
             } else {
                 /// email does not exist
-                /// redirect to login page
                 res.redirect('/login')
-                console.log('email does not exist')
             }
         })
+    } else {
+        /// email not provided
+        res.redirect('/login')
     }
 
 });
