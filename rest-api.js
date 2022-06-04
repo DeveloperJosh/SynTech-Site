@@ -153,11 +153,13 @@ router.post('/login', function(req, res) {
                 } else {
                     /// password does not match
                     /// redirect to login page
+                    console.log('password does not match')
                     res.redirect('/login')
                 }
             } else {
                 /// email does not exist
                 /// redirect to login page
+                console.log('email does not exist')
                 res.redirect('/login')
             }
         })

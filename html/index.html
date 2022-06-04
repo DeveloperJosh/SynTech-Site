@@ -1,43 +1,50 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<!---Dynamic home page-->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
     <meta name="description" content="The home page of SynTech">
     <meta name="author" content="SynTech">
-    <title>Home Page</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/main.css" />
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-  </head>
-  <body class="bg-secondary">
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-      <div class="">
-      <a class="navbar-brand" href="/"><img src="images/logo.png"width="50" height="50" class="rounded-circle"></a>
-      </div>
-      <ul class="navbar-nav">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-            Endpoints
-          </a>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="/">Home</a>
-            <a class="dropdown-item" href="/blog">Blog</a>
-            <a class="dropdown-item" href="/login">Login</a>
-            <a class="dropdown-item" href="/register">Register</a>
-            <a class="dropdown-item" href="/dashboard">Dashboard</a>
-          </div>
-        </li>
-      </ul>
-    </nav>
-    <br>
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-12">
-          <h3 class="text-center">Welcome to SynTech</h3>
-          <p class="text-center text-dark fs-5">This is NOT ready for use please wait till we post a news blog about this in account settings</p>
-        </div>
+    <!---Bootstrap CSS from file-->
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css" />
+</head>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<body style="background-color: #141615">
+  <!--Dynamic NavBar without menu-->
+  <nav class="navbar navbar-expand-lg bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand text-white" href="#">SynTech</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active text-white" aria-current="home" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/blog">Blog</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/register">Register</a>
+          </li>
+        </ul>
       </div>
     </div>
-</html>
+  </nav>
+  <!--Dynamic Home page-->
+  <div class="container">
+    <!---#Info-->
+    <div class="jumbotron text-center text-white">
+      <h1 class="display-4">Welcome to SynTech</h1>
+      <p class="lead">Welp you found us</p>
+      <hr class="my-4">
+      <p>Let's talk about SynTech, We are a community of developers that love to talk about what we are working on.</p>
+      <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+    </div>
+</body>
