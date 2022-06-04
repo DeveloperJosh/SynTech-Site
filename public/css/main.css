@@ -32,3 +32,8 @@ height: 100%;
   color: white;
   text-align: center;
 }
+
+.link {
+  color: white;
+  text-decoration: none;
+}
