@@ -81,6 +81,7 @@ router.get('/', function(req, res) {
     /// run dev mode check
     devModeCheck(req, res, () => {
         /// render the index page
+        req.session == "start"
         res.render('index.html')
     })
 })
