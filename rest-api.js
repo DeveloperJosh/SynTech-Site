@@ -147,14 +147,23 @@ router.post('/login', function(req, res) {
                 /// email exists
                 /// check if password matches
                 if (user.password === req.body.password) {
-                    /// password matches
-                    /// set session
-                    req.session.user = user
+                    res.sea
                     res.redirect('/dashboard')
+                }  else {
+                    /// password does not match
+                    /// redirect to login page
+                    res.redirect('/login')
+                    console.log('password does not match')
                 }
+            } else {
+                /// email does not exist
+                /// redirect to login page
+                res.redirect('/login')
+                console.log('email does not exist')
             }
         })
     }
+
 });
 
 router.get('/logout', function(req, res) {
