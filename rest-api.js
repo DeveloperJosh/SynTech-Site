@@ -7,7 +7,6 @@ const EmailSchema = require('./models/login');
 const blogSchema = require('./models/blog');
 const devModeSchema = require('./models/devmode');
 var cookieSession = require('cookie-session');
-const sgMail = require('@sendgrid/mail')
 
 /// TODO:
 /// - add user delete functionality
@@ -15,27 +14,6 @@ const sgMail = require('@sendgrid/mail')
 /// - Add email sending on login
 
 require('dotenv').config();
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-
-
-function email_send(email, subject, body) {
-    const msg = {
-        to: `${email}`,
-        from: 'bam0909@outlook.com',
-        subject: subject,
-        text: body,
-        html: `<strong>${body}</strong>`,
-      }
-      sgMail
-        .send(msg)
-        .then(() => {
-          console.log('Email sent')
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-    }
-
 function makeid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -170,9 +148,8 @@ router.post('/login', function(req, res) {
                     /// password matches
                     /// set session
                     req.session.user = user
-                    res.redirect('/')
+                    res.redirect('/dashboard')
                     /// email about a login being detected
-                    email_send(user.email, 'Login Detected', `Someone Loggined in with your email: ${user.email}\nif this is not you please contact the admin\nIp: ${req.ip}`)
                 } else {
                     /// password does not match
                     /// redirect to login page
