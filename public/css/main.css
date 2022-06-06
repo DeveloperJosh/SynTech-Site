@@ -37,3 +37,7 @@ height: 100%;
   color: white;
   text-decoration: none;
 }
+
+.link:hover {
+  color: #6b6f70;
+}
