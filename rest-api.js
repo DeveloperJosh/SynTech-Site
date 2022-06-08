@@ -7,6 +7,9 @@ const EmailSchema = require('./models/login');
 const blogSchema = require('./models/blog');
 const devModeSchema = require('./models/devmode');
 var cookieSession = require('cookie-session');
+const RedditImageFetcher = require("reddit-image-fetcher");
+const fetch = require('node-fetch');
+const meme_url = "https://www.reddit.com/r/dankmemes.json?sort=top&t=week";
 
 /// TODO:
 /// - add user delete functionality
@@ -332,6 +335,19 @@ router.get('/username', function(req, res) {
     username = req.session.user;
     username = username.username;
     res.send(username);
+});
+
+router.get('/meme', function(req, res) {
+    fetch(meme_url)
+        .then(res => res.json())
+        .then(json => {
+            /// get random meme
+            res.send({ url: json.data.children[Math.floor(Math.random() * json.data.children.length)].data.url});
+        })
+        .catch(err => {
+            console.log(err);
+            res.send('Error');
+        })
 });
 
 app.use('/', router);
