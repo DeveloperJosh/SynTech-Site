@@ -5,32 +5,53 @@ const rateLimit  = require('express-rate-limit');
 const find = require('../functions/index');
 const config = require('../config');
 const EmailSchema = require('../models/login');
-const bodyParser = require('body-parser');
 require('dotenv').config();
     
 const check_headers = async (req, res) => {
     /// check headers for email
     if (req.headers.email) {
-        return 100
+        /// check if email is in database
+        const email = req.headers.email;
+        const password = req.headers.password;
+        const user = await EmailSchema.findOne({
+            _id: email,
+            password: password,
+        });
+        if (user) {
+            /// if user is in database
+            return true;
+        } else {
+            /// if user is not in database
+            return false;
+        }
     } else {
-        return 2
+        /// if email is not in headers, kill request
+        return false;
     }
 }
 
 const APIlimiter = rateLimit({
-	windowMs: 15 * 60 * 1000,
+	windowMs: 60 * 60 * 1000,
     max: async (req, res) => {
         /// check headers for email
-        if (await check_headers(req, res) === 100) {
-            return 100
+        if (await check_headers(req, res) === true) {
+            return 1000;
         } else {
-            return 2
+            return 100;
         }
     },
     handler: (req, res) => {
-        res.status(429).send('Woah, You have used 100 requests. Please wait 15 minutes before trying again.');
+        /// check headers for email
+        if (check_headers(req, res) === true) {
+            /// if email is in database
+            res.status(429).send({ error: 'Too Many Requests' });
+        } else {
+            /// if email is not in database
+            res.status(429).send({ error: 'You have exceeded the limit of requests, please try again in 15 minutes. For more requests, please add your email and password to the headers.' });
+        }
     },
 	standardHeaders: true,
+    legacyHeaders: false
 })
 
 app.use(express.static(__dirname + '/public'));

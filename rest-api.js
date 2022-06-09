@@ -35,6 +35,14 @@ app.use(cookieSession({
       extended: true
   })) 
 
+app.disable('x-powered-by');
+
+app.use(function (req, res, next) {
+    res.setHeader('Powered-By', 'SynTech')
+    res.setHeader('Made-By', 'Blue at SynTech')
+    next()
+  })
+
 let url = process.env.URL
 mongoose.connect(url, {
     useNewUrlParser: true,

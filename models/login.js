@@ -23,7 +23,8 @@ const EmailSchema = new mongoose.Schema({
     premium: {
         type: Boolean,
         default: false
-    }
+    },
+    apikey: NotString
 
 })
 module.exports = mongoose.model('logins', EmailSchema)
