@@ -45,3 +45,8 @@ height: 100%;
 .javascript {
   color: #f0db4f;
 }
+
+.small-image {
+  width: 20%;
+  height: auto;
+}
