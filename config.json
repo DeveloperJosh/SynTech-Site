@@ -1,0 +1,14 @@
+{
+    "version": "1.0.0",
+    "description": "",
+    "sampleUrl": false,
+    "defaultVersion": "0.0.0",
+    "settings": {
+        "name": "SynTech-Site",
+        "shortName": "SynTech",
+        "startUrl": "/",
+        "display": "standalone",
+        "orientation": "portrait",
+        "background_color": "#ffffff"
+    }
+}

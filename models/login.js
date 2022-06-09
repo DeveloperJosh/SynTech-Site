@@ -19,6 +19,10 @@ const EmailSchema = new mongoose.Schema({
     admin: {
         type: Boolean,
         default: false
+    },
+    premium: {
+        type: Boolean,
+        default: false
     }
 
 })
