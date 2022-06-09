@@ -8,6 +8,7 @@ const blogSchema = require('./models/blog');
 const devModeSchema = require('./models/devmode');
 var cookieSession = require('cookie-session');
 const api = require('./api/ends');
+const makeid = require('./functions/number_gen');
 
 /// TODO:
 /// - add user delete functionality
@@ -15,17 +16,6 @@ const api = require('./api/ends');
 /// - Add email sending on login
 
 require('dotenv').config();
-
-function makeid(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * 
- charactersLength));
-   }
-   return result;
-}
 
 app.use(cookieSession({
     name: 'session',

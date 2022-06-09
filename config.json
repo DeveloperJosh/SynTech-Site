@@ -1,14 +1,13 @@
 {
     "version": "1.0.0",
     "description": "",
+    "api_limit_paid": "1000",
+    "api_limit_free": "100",
     "sampleUrl": false,
     "defaultVersion": "0.0.0",
     "settings": {
         "name": "SynTech-Site",
         "shortName": "SynTech",
-        "startUrl": "/",
-        "display": "standalone",
-        "orientation": "portrait",
-        "background_color": "#ffffff"
+        "startUrl": "/"
     }
 }

@@ -3,29 +3,23 @@ const api = express.Router();
 const app = express();
 const rateLimit  = require('express-rate-limit');
 const find = require('../functions/index');
+const makeid = require('../functions/number_gen');
 const config = require('../config');
 const EmailSchema = require('../models/login');
 require('dotenv').config();
-    
-const check_headers = async (req, res) => {
-    /// check headers for email
-    if (req.headers.email) {
-        /// check if email is in database
-        const email = req.headers.email;
-        const password = req.headers.password;
-        const user = await EmailSchema.findOne({
-            _id: email,
-            password: password,
+
+const apikey_check = async (req, res) => {
+    if (req.headers.authorization) {
+        const apikey = req.headers.authorization;
+        const key = await EmailSchema.findOne({
+            apikey: apikey,
         });
-        if (user) {
-            /// if user is in database
+        if (key) {
             return true;
         } else {
-            /// if user is not in database
             return false;
         }
     } else {
-        /// if email is not in headers, kill request
         return false;
     }
 }
@@ -33,21 +27,17 @@ const check_headers = async (req, res) => {
 const APIlimiter = rateLimit({
 	windowMs: 60 * 60 * 1000,
     max: async (req, res) => {
-        /// check headers for email
-        if (await check_headers(req, res) === true) {
-            return 1000;
+        if (await apikey_check(req, res) === true) {
+            return config.api_limit_paid;
         } else {
-            return 100;
+            return config.api_limit_free;
         }
     },
     handler: (req, res) => {
-        /// check headers for email
-        if (check_headers(req, res) === true) {
-            /// if email is in database
+        if (apikey_check(req, res) === true) {
             res.status(429).send({ error: 'Too Many Requests' });
         } else {
-            /// if email is not in database
-            res.status(429).send({ error: 'You have exceeded the limit of requests, please try again in 15 minutes. For more requests, please add your email and password to the headers.' });
+           res.status(429).send({ error: 'Woah there, You used 100 request\'s I think you should get a api key.' });
         }
     },
 	standardHeaders: true,
@@ -77,5 +67,45 @@ api.get('/image', APIlimiter, function(req, res) {
         });
     }
 });
+
+api.get('/key', function(req, res) {
+    /// generate a new api key for the user
+    user = req.session.user
+    if (user) {
+        /// see if the user has an apikey already if not generate one
+        const key = EmailSchema.findOne({
+            _id: user,
+        }, function(err, user) {
+            if (err) {
+                console.log(err);
+                res.send('Error: ' + err);
+            }
+            if (user) {
+                if (user.apikey) {
+                    res.send({ apikey: user.apikey, message: 'If somone has your key please email us at support@syntech.dev' });
+                }
+                else {
+                    const newKey = makeid(32);
+                    EmailSchema.updateOne({
+                        _id: user,
+                    }, {
+                        apikey: newKey,
+                    }, function(err, user) {
+                        if (err) {
+                            console.log(err);
+                            res.send('Error: ' + err);
+                        }
+                        if (user) {
+                            res.send({ apikey: newKey });
+                        }
+                    });
+                }
+            }
+        });
+    } else {
+        res.send({ message: 'You are not logged in' });
+    }
+});
+
 
 module.exports = api;
