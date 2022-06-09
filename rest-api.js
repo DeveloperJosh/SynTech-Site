@@ -74,7 +74,7 @@ function devModeCheck(req, res, next) {
 
 router.get('/', devModeCheck, function(req, res) {
     res.render('index.html')
-})
+});
 
 router.get('/blog', devModeCheck, function(req, res) {
         res.render('blog.html')
@@ -95,7 +95,7 @@ router.post('/blog', function(req, res) {
     ).catch((err) => {
         console.log(err)
     })
-})
+});
 
 router.get('/blog/all', function(req, res) {
     blogSchema.find().then((blogs) => {
@@ -103,7 +103,7 @@ router.get('/blog/all', function(req, res) {
     }).catch((err) => {
         console.log(err)
     })
-})
+});
 
 router.delete('/blog/:id', function(req, res) {
     blogSchema.deleteOne({
@@ -113,7 +113,7 @@ router.delete('/blog/:id', function(req, res) {
     }).catch((err) => {
         console.log(err)
     })
-})
+});
 
 router.get('/login', devModeCheck, function(req, res) {
         res.render('login.html')
@@ -141,7 +141,6 @@ router.post('/login', function(req, res) {
     } else {
         res.redirect('/login')
     }
-
 });
 
 router.get('/logout', function(req, res) {
