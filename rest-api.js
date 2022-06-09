@@ -335,14 +335,13 @@ router.get('/username', function(req, res) {
     res.send(username);
 });
 
-router.get('/meme', function(req, res) {
+router.get('/image', function(req, res) {
     /// let user pick a subreddit
     var meme = req.query.subreddit;
     var limit = req.query.limit;
     if (meme) {
         /// get the meme from the subreddit
         find({ subreddit: meme, limit: limit}).then(function(posts) {
-            /// add the meme to the img tag
             res.send({ url: posts });
         })
     } else {

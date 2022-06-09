@@ -8,6 +8,17 @@ function check(link) {
     return false
 }
 
+function nsfw_check(subreddit) {
+    /// check if subreddit is nsfw
+    list = ['nsfw', 'nsfw_gifs', 'nsfw_gif', 'nsfw_nsfw', 'nsfw', 'gonewild']
+    for (i = 0; i < list.length; i++) {
+        if (subreddit.toLowerCase().includes(list[i])) { 
+            return true
+        }
+    }
+    return false
+}
+
 function find(params) {
     /// returns a single image from a subreddit
     if (params.limit === undefined) {
@@ -22,7 +33,12 @@ function find(params) {
             const post = posts[Math.floor(Math.random() * posts.length)];
             const link = post.data.url;
             if (check(link)) {
-                return link
+                if (nsfw_check(params.subreddit)) {
+                    return "NSFW is is not allowed"
+                }
+                else {
+                    return link
+                }
             }
             return find(params)
         })
