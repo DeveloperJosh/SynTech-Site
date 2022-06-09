@@ -81,7 +81,7 @@ api.get('/key', function(req, res) {
                     res.send({ apikey: user.apikey, message: 'If somone has your key please email us at support@syntech.dev' });
                 }
                 else {
-                    const newKey = makeid(32);
+                    const newKey = makeid(60);
                     EmailSchema.updateOne({
                         _id: user,
                     }, {
