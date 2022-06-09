@@ -3,6 +3,10 @@ const fetch = require('node-fetch');
 function check(link) {
     /// check if link ends with .jpg or .png or .gif
     if (link.endsWith('.jpg') || link.endsWith('.png') || link.endsWith('.gif') || link.endsWith('.jpeg') || link.endsWith('.gifv')) {
+        /// check if link is a video
+        if (link.endsWith('.gifv')) {
+            return '<video controls><source src="' + link + '" type="video/mp4"></video>';
+        }
         return true
     }
     return false

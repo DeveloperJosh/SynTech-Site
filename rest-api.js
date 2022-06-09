@@ -7,8 +7,7 @@ const EmailSchema = require('./models/login');
 const blogSchema = require('./models/blog');
 const devModeSchema = require('./models/devmode');
 var cookieSession = require('cookie-session');
-const find = require('./functions/index');
-const rateLimit  = require('express-rate-limit');
+const api = require('./api/ends');
 
 /// TODO:
 /// - add user delete functionality
@@ -35,13 +34,6 @@ app.use(cookieSession({
   app.use(express.urlencoded({
       extended: true
   })) 
-
-const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-})
 
 let url = process.env.URL
 mongoose.connect(url, {
@@ -342,24 +334,8 @@ router.get('/username', function(req, res) {
     res.send(username);
 });
 
-router.get('/image', limiter, function(req, res) {
-    /// let user pick a subreddit
-    var meme = req.query.subreddit;
-    var limit = req.query.limit;
-    if (meme) {
-        /// get the meme from the subreddit
-        find({ subreddit: meme, limit: limit}).then(function(posts) {
-            res.send({ url: posts });
-        })
-    } else {
-        /// get the meme from the subreddit
-        find({ subreddit: 'memes', limit: 30 }).then(function(posts) {
-            res.send({ url: posts });
-        });
-    }
-});
-
 app.use('/', router);
+app.use('/api', api);
 app.listen(process.env.PORT || 3000, function(){
     console.log("SynTech is running on port %d in %s mode", this.address().port, app.settings.env);
 });
