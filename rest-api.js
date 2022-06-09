@@ -8,6 +8,7 @@ const blogSchema = require('./models/blog');
 const devModeSchema = require('./models/devmode');
 var cookieSession = require('cookie-session');
 const find = require('./functions/index');
+const rateLimit  = require('express-rate-limit');
 
 /// TODO:
 /// - add user delete functionality
@@ -34,7 +35,13 @@ app.use(cookieSession({
   app.use(express.urlencoded({
       extended: true
   })) 
-  
+
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+})
 
 let url = process.env.URL
 mongoose.connect(url, {
@@ -315,8 +322,8 @@ router.post('/forget', function(req, res) {
 
 router.get('/info', function(req, res) {
     // show session info
-    console.log(req.session);
-    res.send(req.session.user);
+    /// send ip address
+    res.send(req.ip);
 });
 
 
@@ -335,7 +342,7 @@ router.get('/username', function(req, res) {
     res.send(username);
 });
 
-router.get('/image', function(req, res) {
+router.get('/image', limiter, function(req, res) {
     /// let user pick a subreddit
     var meme = req.query.subreddit;
     var limit = req.query.limit;
