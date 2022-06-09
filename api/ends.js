@@ -24,17 +24,6 @@ const apikey_check = async (req, res) => {
     }
 }
 
-function checkDomain(req, res, next) {
-    /// check if in dev mode
-    if (req.hostname === config.settings.testdomain) {
-        return next();
-    }
-    if (req.hostname === config.settings.domain) {
-        return next();
-    }
-    res.status(403).send('Forbidden');
-}
-
 const APIlimiter = rateLimit({
 	windowMs: 60 * 60 * 1000,
     max: async (req, res) => {
@@ -57,13 +46,13 @@ const APIlimiter = rateLimit({
 
 app.use(express.static(__dirname + '/public'));
 
-api.get('/', checkDomain, function(req, res) {
+api.get('/', function(req, res) {
     res.send({ message: 'Welcome to the API', version: config.version});
 });
 
 app.get('/ip', (req, res) => res.send(req.ip))
 
-api.get('/image', checkDomain, APIlimiter, function(req, res) {
+api.get('/image', APIlimiter, function(req, res) {
     /// let user pick a subreddit
     var meme = req.query.subreddit;
     var limit = req.query.limit;
@@ -81,7 +70,7 @@ api.get('/image', checkDomain, APIlimiter, function(req, res) {
     }
 });
 
-api.get('/key', checkDomain, function(req, res) {
+api.get('/key', function(req, res) {
     /// generate a new api key for the user
     user = req.session.user
     if (user) {
