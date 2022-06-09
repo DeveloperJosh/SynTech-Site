@@ -322,8 +322,8 @@ router.post('/forget', function(req, res) {
 
 router.get('/info', function(req, res) {
     // show session info
-    /// send ip address
-    res.send(req.ip);
+    console.log(req.session);
+    res.send(req.session.user);
 });
 
 
