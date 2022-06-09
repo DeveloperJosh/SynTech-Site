@@ -8,6 +8,8 @@
     "settings": {
         "name": "SynTech-Site",
         "shortName": "SynTech",
-        "startUrl": "/"
+        "startUrl": "/",
+        "testdomain": "localhost",
+        "domain": "api.syntech.lol"
     }
 }

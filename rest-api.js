@@ -75,19 +75,13 @@ function devModeCheck(req, res, next) {
     })
 }
 
-router.get('/', function(req, res) {
-    /// run dev mode check
-    devModeCheck(req, res, () => {
-        /// render the index page
-        res.render('index.html')
-    })
+router.get('/', devModeCheck, function(req, res) {
+    res.render('index.html')
 })
 
 /// making a blog page
-router.get('/blog', function(req, res) {
-    devModeCheck(req, res, () => {
+router.get('/blog', devModeCheck, function(req, res) {
         res.render('blog.html')
-    })
 });
 
 router.post('/blog', function(req, res) {
@@ -125,10 +119,8 @@ router.delete('/blog/:id', function(req, res) {
     })
 })
 
-router.get('/login', function(req, res) {
-    devModeCheck(req, res, () => {
+router.get('/login', devModeCheck, function(req, res) {
         res.render('login.html')
-    })
 });
 
 router.post('/login', function(req, res) {
@@ -172,10 +164,8 @@ router.get('/logout', function(req, res) {
 });
 
 
-router.get('/register', function(req, res) {
-    devModeCheck(req, res, () => {
-        res.render('register.html')
-    })
+router.get('/register', devModeCheck, function(req, res) {
+    res.render('register.html')
 });
 
 router.post('/register', function(req, res) {
@@ -218,11 +208,9 @@ router.post('/register', function(req, res) {
     })
 }); 
 
-router.get('/dashboard', function(req, res) {
+router.get('/dashboard', devModeCheck, function(req, res) {
     if (req.session.user) {
-        devModeCheck(req, res, () => {
-         res.render('dashboard.html')
-    })
+        res.render('dashboard.html')
     } else {
         res.redirect('/login');
     }
@@ -270,10 +258,8 @@ router.post('/admin/login', function(req, res) {
     })
 });
 
-router.get('/forget', function(req, res) {
-    devModeCheck(req, res, () => {
-        res.render('forget.html')
-    })
+router.get('/forget', devModeCheck, function(req, res) {
+    res.render('forget.html')
 });
 
 router.post('/forget', function(req, res) {
