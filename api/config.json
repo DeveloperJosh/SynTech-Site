@@ -9,7 +9,6 @@
         "name": "SynTech-Site",
         "shortName": "SynTech",
         "startUrl": "/",
-        "testdomain": "localhost",
-        "domain": "api.syntech.lol"
+        "domain": "syntech.lol"
     }
 }

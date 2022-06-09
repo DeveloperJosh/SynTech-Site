@@ -53,28 +53,22 @@ api.get('/', function(req, res) {
 app.get('/ip', (req, res) => res.send(req.ip))
 
 api.get('/image', APIlimiter, function(req, res) {
-    /// let user pick a subreddit
     var meme = req.query.subreddit;
     var limit = req.query.limit;
     if (meme) {
-        /// get the meme from the subreddit
         find({ subreddit: meme, limit: limit}).then(function(posts) {
             res.send({ url: posts });
         })
     } else {
-        /// get the meme from the subreddit
         find({ subreddit: 'memes', limit: 30 }).then(function(posts) {
-            /// get url from posts
            res.send({ url: posts });
         });
     }
 });
 
 api.get('/key', function(req, res) {
-    /// generate a new api key for the user
     user = req.session.user
     if (user) {
-        /// see if the user has an apikey already if not generate one
         const key = EmailSchema.findOne({
             _id: user,
         }, function(err, user) {

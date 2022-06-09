@@ -21,7 +21,8 @@ app.use(cookieSession({
     name: 'session',
     keys: [makeid(32)],
   }))
-  app.use(express.urlencoded({
+
+app.use(express.urlencoded({
       extended: true
   })) 
 
@@ -45,15 +46,12 @@ mongoose.connect(url, {
 
 app.set('views', path.join(__dirname, 'html'));
 app.engine('html', require('ejs').renderFile);
-app.set('trust proxy', 1) // trust first proxy
+app.set('trust proxy', 1)
 app.use(express.static(__dirname + '/public'));
 
-// make a mongo check for dev mode
 function devModeCheck(req, res, next) {
-    /// check if dev mode is on and check if dev mode exists
     devModeSchema.findOne({
         _id: req.hostname
-        /// if dev mode does not exist, create it then redirect and check if dev mode is true
     }, (err, devMode) => {
         if (err) {
             console.log(err)
@@ -64,7 +62,6 @@ function devModeCheck(req, res, next) {
                 next()
             }
         } else {
-            /// create dev mode
             const newDevMode = new devModeSchema({
                 _id: req.hostname,
                 dev_mode: false
@@ -79,7 +76,6 @@ router.get('/', devModeCheck, function(req, res) {
     res.render('index.html')
 })
 
-/// making a blog page
 router.get('/blog', devModeCheck, function(req, res) {
         res.render('blog.html')
 });
@@ -125,44 +121,33 @@ router.get('/login', devModeCheck, function(req, res) {
 
 router.post('/login', function(req, res) {
     let email = req.body.email;
-    /// email provided
     if (email) {
-        /// check if email exists
         EmailSchema.findOne({
             _id: email
         }, (err, user) => {
             if (err) {
                 console.log(err)
             } else if (user) {
-                /// email exists
-                /// check if password is correct
                 if (user.password === req.body.password) {
-                    /// password is correct
-                    /// set session
                     req.session.user = user
                     res.redirect('/dashboard')
                 } else {
-                    /// password is incorrect
                     res.redirect('/login')
                 }
             } else {
-                /// email does not exist
                 res.redirect('/login')
             }
         })
     } else {
-        /// email not provided
         res.redirect('/login')
     }
 
 });
 
 router.get('/logout', function(req, res) {
-    /// delete the session
     req.session = null;
     res.redirect('/');
 });
-
 
 router.get('/register', devModeCheck, function(req, res) {
     res.render('register.html')
@@ -173,7 +158,6 @@ router.post('/register', function(req, res) {
     let username = req.body.username;
     let password = req.body.password;
     let confirmPassword = req.body.confirmPassword;
-    /// check if email already exists
     EmailSchema.findOne({
         _id: email
     }, function(err, user) {
@@ -239,7 +223,6 @@ router.get('/admin/login', function(req, res) {
 });
 
 router.post('/admin/login', function(req, res) {
-    /// check if email has admin rights
     EmailSchema.findOne({
         _id: req.body.email,
         admin: true
@@ -297,22 +280,17 @@ router.post('/forget', function(req, res) {
 });
 
 router.get('/info', function(req, res) {
-    // show session info
     console.log(req.session);
     res.send(req.session.user);
 });
 
-
-//// geting email
 router.get('/getemail', function(req, res) {
-    /// get email from session json
     email = req.session.user;
     email = email._id;
     res.send(email);
 });
 
 router.get('/username', function(req, res) {
-    /// get username from session json
     username = req.session.user;
     username = username.username;
     res.send(username);
