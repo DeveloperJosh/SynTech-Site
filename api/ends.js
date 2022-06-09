@@ -14,7 +14,8 @@ const limiter = rateLimit({
 })
 
 function premium(ip) {
-    premium_ip = ['209.239.16.171', '::1']
+    /// vpn ids
+    premium_ip = ['89.238.142.238', '::1']
     if (ip === premium_ip) {
         return true
     }
