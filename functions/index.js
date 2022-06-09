@@ -11,7 +11,7 @@ function check(link) {
 
 function find(params) {
     /// returns a single image from a subreddit
-    const iamge = `https://www.reddit.com/r/${params.subreddit}.json?sort=top&t=week&limit=900`;
+    const iamge = `https://www.reddit.com/r/${params.subreddit}.json?sort=top&t=week&limit=50`;
     return fetch(iamge)
         .then(res => res.json())
         .then(json => {
