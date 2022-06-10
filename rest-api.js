@@ -9,8 +9,6 @@ const devModeSchema = require('./models/devmode');
 var cookieSession = require('cookie-session');
 const api = require('./api/ends');
 const makeid = require('./functions/number_gen');
-const e = require('express');
-const { use } = require('./api/ends');
 
 /// TODO:
 /// - add user delete functionality
