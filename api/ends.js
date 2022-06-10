@@ -104,5 +104,4 @@ api.get('/key', function(req, res) {
     }
 });
 
-
 module.exports = api;
