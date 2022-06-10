@@ -1,159 +1,151 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="bootstrap/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <script
+      src="https://kit.fontawesome.com/c9cc288421.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="icon" href="images/logo.png" />
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"
+    ></script>
     <link rel="stylesheet" type="text/css" href="css/main.css" />
     <script>
-        function logout() {
-            window.location.href = "/logout";
-        }
-        function delete_account_button() {
-            // using delete request to delete the account
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    window.location.href = "/";
-                }
-            };
-            xhttp.open("DELETE", "/delete", true);
-            xhttp.send();
+      function logout() {
+        window.location.href = "/logout";
+      }
+      function delete_account_button() {
+        // using delete request to delete the account
+        if (confirm("Are you sure you want to delete your account?")) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
             window.location.href = "/";
+          }
+        };
+        xhttp.open("DELETE", "/delete", true);
+        xhttp.send();
+        window.location.href = "/";
+      } else {  
+        return;
+         }
         }
 
-        function new_password() {
-            window.location.href = "/forget";
-        }
+      function new_password() {
+        window.location.href = "/forget";
+      }
 
-        function getEmail() {
-            // get email from /info
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("email").innerHTML = this.responseText;
-                }
-            };
-            xhttp.open("GET", "/getemail", true);
-            xhttp.send();
-        }
-       function getUsername() {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("username").innerHTML = this.responseText;
-                }
-            };
-            xhttp.open("GET", "/username", true);
-            xhttp.send();
-        }
+      function getEmail() {
+        // get email from /info
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("email").innerHTML = this.responseText;
+          }
+        };
+        xhttp.open("GET", "/getemail", true);
+        xhttp.send();
+      }
+      function getUsername() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("username").innerHTML = this.responseText;
+          }
+        };
+        xhttp.open("GET", "/username", true);
+        xhttp.send();
+      }
     </script>
-</head>
-<body class="bg-secondary">
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-        <a class="navbar-brand" href="/"><img src="images/logo.png"width="50" height="50" class="rounded-circle"></a>
-        <ul class="navbar-nav">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                    Endpoints
-                </a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="/">Home</a>
-                    <a class="dropdown-item" href="/blog">Blog</a>
-                    <a class="dropdown-item" href="/login">Login</a>
-                    <a class="dropdown-item" href="/register">Register</a>
-                    <a class="dropdown-item" href="/dashboard">Dashboard</a>
-                </div>
+  </head>
+  <script src="bootstrap/js/bootstrap.min.js"></script>
+  <body style="background-color: #141615">
+    <!--Dynamic NavBar without menu-->
+    <nav class="navbar navbar-expand-lg bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand text-white" href="/">SynTech</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active text-white" aria-current="home" href="/"
+                >Home</a
+              >
             </li>
-        </ul>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="/blog">Blog</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="/register">Register</a>
+            </li>
+          </ul>
+        </div>
+      </div>
     </nav>
-    <br>
-    <div class="container">
-        <h3 class="center-text">User Page</h3>
+    <br />
+      <div class="container mx-auto text-center">
         <div class="row">
-            <div class="col-4">
-              <div class="list-group" id="list-tab" role="tablist">
-                <a class="list-group-item list-group-item-action bg-light text-dark" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Profile</a>
-                <a class="list-group-item list-group-item-action bg-light text-dark" id="list-news-list" data-toggle="list" href="#list-news" role="tab" aria-controls="news">News</a>
-                <a class="list-group-item list-group-item-action bg-light text-dark" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab" aria-controls="settings">Settings</a>
-              </div>
-            </div>
-            <div class="col-8">
-              <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
-                    <p>
-                        <strong>Username:</strong>
-                        <span id="username" class="text-warning"></span>
-                        <script>
-                            getUsername();
-                        </script>
-                    </p>
-                    <p>
-                        <strong>Email:</strong>
-                        <span id="email" class="text-warning"></span>
-                        <script>
-                            getEmail();
-                        </script>
-                    </p>
-                    <p>
-                        <strong>Account Type:</strong>
-                        <span id="account_type" class="text-warning">Free</span>
-                        <br>
-                        <button type="button" class="btn btn-primary">Upgrade Account</button>
-                    </p>
-                </div>
-                <div class="tab-pane fade list-group" id="list-news" role="tabpanel" aria-labelledby="list-news-list">
-                        <script>
-                $(document).ready(function() {
-                  $.ajax({
-                    url: '/blog/all',
-                    type: 'GET',
-                    success: function(data) {
-                      console.log(data);
-
-                      if(data.length == 0) {
-                        $('#list-news').append('<div class="col-sm-12"><h1 class="text-center text-white fs-10">No Posts Yet</h1></div>');
-                      }
-
-                      for (var i = 0; i < data.length; i++) {
-                        $('#list-news').append(
-                            '<a href="#list-news" class="list-group-item list-group-item-action flex-column align-items-start">' +
-                                '<div class="d-flex w-100 justify-content-between">' +
-                                    '<h5 class="mb-1">' + data[i].title + '</h5>' +
-                                    '<small>' + data[i].date + '</small>' +
-                                '</div>' +
-                                '<p class="mb-1">' + data[i].body + '</p>' 
-                            + '</a>' +
-                            '<br>'
-                        );
-                    }
-                  }
-                })
-            });
-                        </script>
-                      </a>
-                </div>
-                <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
-                    <p>
-                        <strong>Change Password:</strong>
-                        <button type="button" class="btn btn-danger" onclick="new_password()">Change Password</button>
-                    </p>
-                    <p>
-                        <strong>Logout Account:</strong>
-                        <button type="button" class="btn btn-danger" onclick="logout()">Logout</button>
-                    </p>
-                    <!---Button That Opens Menu-->
-                    <strong>Delete Account:</strong>
-                    <button type="button" class="btn btn-danger" id="delete_account" onclick="delete_account_button()">Delete Account</button>
-                    </p>
-                </div>
-              </div>
-            </div>
+          <div class="col-sm-12">
+            <h1 class="text-white">Dashboard</h1>
           </div>
-    </div>
-</body>
+        </div>
+      </div>
+      <div class="container mx-auto text-center">
+        <div class="row">
+          <div class="col-sm-12">
+            <h2 class="text-white">Welcome <span id="username"></span></h2>
+            <script>
+              getUsername();
+            </script>
+          </div>
+        </div>
+      </div>
+      <div class="container mx-auto text-center">
+        <div class="row">
+          <div class="col-sm-12">
+            <h3 class="text-white">Email: <span id="email"></span></h3>
+            <script>
+              getEmail();
+            </script>
+          </div>
+        </div>
+      </div>
+      <div class="container mx-auto text-center">
+        <div class="row">
+          <div class="col-sm-12">
+            <h3 class="text-white">
+              <button class="btn btn-primary" onclick="logout()">Logout</button>
+              <button class="btn btn-primary" onclick="delete_account_button()">
+                Delete Account
+              </button>
+              <button class="btn btn-primary" onclick="new_password()">
+                Change Password
+              </button>
+            </h3>
+          </div>
+        </div>
+      </div>
+    </body>
 </html>

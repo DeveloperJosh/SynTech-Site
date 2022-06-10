@@ -9,6 +9,8 @@ const devModeSchema = require('./models/devmode');
 var cookieSession = require('cookie-session');
 const api = require('./api/ends');
 const makeid = require('./functions/number_gen');
+const e = require('express');
+const { use } = require('./api/ends');
 
 /// TODO:
 /// - add user delete functionality
@@ -147,6 +149,21 @@ router.get('/logout', function(req, res) {
     res.redirect('/');
 });
 
+router.delete('/delete', function(req, res) {
+    // TODO: add user delete functionality
+    user = req.session.user._id
+    EmailSchema.deleteOne({
+        _id: user
+    }).then(() => {
+        res.redirect('/')
+    }
+    ).catch((err) => {
+        console.log(err)
+    }
+    )
+});
+
+
 router.get('/register', devModeCheck, function(req, res) {
     res.render('register.html')
 });
@@ -218,25 +235,6 @@ router.get('/admin', function(req, res) {
 
 router.get('/admin/login', function(req, res) {    
     res.render('admin_login.html')
-});
-
-router.post('/admin/login', function(req, res) {
-    EmailSchema.findOne({
-        _id: req.body.email,
-        admin: true
-    }, function(err, user) {
-        if (err) {
-            console.log(err);
-            res.send('Error: ' + err);
-        } else {
-            if (user) {
-                req.session.user = user;
-                res.redirect('/admin');
-            } else {
-                res.send('Error: You are not an admin');
-            }
-        }
-    })
 });
 
 router.get('/forget', devModeCheck, function(req, res) {

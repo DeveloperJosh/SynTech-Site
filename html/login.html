@@ -55,6 +55,18 @@
                   <!---PASSWORD WITH EYE-->
                   <label for="inputPassword">Password</label>
                   <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
+                  <!-- show password -->
+                  <input type="checkbox" onclick="myFunction()"> Show Password
+                  <script>
+                    function myFunction() {
+                      var x = document.getElementById("inputPassword");
+                      if (x.type === "password") {
+                        x.type = "text";
+                      } else {
+                        x.type = "password";
+                      }
+                    }
+                  </script>
                 </div>
                 <br>
                 <div class="text-center">
@@ -74,4 +86,6 @@
           </div>
         </div>
       </div>
+    </div>
+  </body>
 </html>

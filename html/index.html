@@ -51,9 +51,23 @@
   <br>
   <!--Dynamic Home page-->
   <div class="container">
-    <!---#Info-->
     <div class="jumbotron text-center text-white">
-      <h1 class="display-4">Welcome to SynTech</h1>
+    <h1 class="display-4">
+      <span id="message"></span>
+      <script>
+        var message = "Welcome to SynTech!";
+        var speed = 100;
+  
+        function typeWriter() {
+          if (message.length > 0) {
+            document.getElementById("message").innerHTML += message.charAt(0);
+            message = message.substring(1);
+            setTimeout(typeWriter, speed);
+          }
+        }
+        typeWriter();
+      </script>
+    </h1>
       <p class="lead">Welp you found us</p>
       <hr class="my-4">
       <p>Let's talk about SynTech, We are a community of developers that love to talk about what we are working on.</p>
@@ -62,5 +76,6 @@
     <div class="footer">
       <p>Site made by Blue, Check out the <a class="link" href="https://github.com/DeveloperJosh/SynTech-Site">Code</a></p>
     </div>
-</body>
+  </div>
+ </body>
 </html>
