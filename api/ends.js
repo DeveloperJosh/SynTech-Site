@@ -55,12 +55,13 @@ app.get('/ip', (req, res) => res.send(req.ip))
 api.get('/image', APIlimiter, function(req, res) {
     var meme = req.query.subreddit;
     var limit = req.query.limit;
+    var nsfw = req.query.nsfw;
     if (meme) {
-        find({ subreddit: meme, limit: limit}).then(function(posts) {
+        find({ subreddit: meme, limit: limit, nsfw: nsfw}).then(function(posts) {
             res.send({ url: posts });
         })
     } else {
-        find({ subreddit: 'memes', limit: 30 }).then(function(posts) {
+        find({ subreddit: 'memes', nsfw: false, limit: 30 }).then(function(posts) {
            res.send({ url: posts });
         });
     }

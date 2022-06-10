@@ -13,7 +13,6 @@ const makeid = require('./functions/number_gen');
 /// TODO:
 /// - add user delete functionality
 /// - make an admin page
-/// - Add email sending on login
 
 require('dotenv').config();
 
