@@ -33,15 +33,17 @@ app.use(function (req, res, next) {
     next()
   })
 
-let url = process.env.URL
+let url = process.env.URL;
 mongoose.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
-    console.log('Connected to MongoDB')
-}).catch((err) => {
-    console.log('Unable to connect to MongoDB Database.\nError: ' + err)
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        dbName: 'SynTech'
+    }).then(() => {
+        console.log('Connected to MongoDB')
+    }).catch((err) => {
+        console.log('Unable to connect to MongoDB Database.\nError: ' + err)
 })
+
 
 app.set('views', path.join(__dirname, 'html'));
 app.engine('html', require('ejs').renderFile);

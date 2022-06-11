@@ -27,4 +27,5 @@ const EmailSchema = new mongoose.Schema({
     apikey: NotString
 
 })
+/// save to syn collection
 module.exports = mongoose.model('logins', EmailSchema)

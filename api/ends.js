@@ -37,7 +37,8 @@ const APIlimiter = rateLimit({
         if (apikey_check(req, res) === true) {
             res.status(429).send({ error: 'Too Many Requests, Please try again in 1 hour.' });
         } else {
-           res.status(429).send({ error: 'Woah there, You used 100 request\'s I think you should get a api key.' });
+           text = `Woah there, You used ${config.api_limit_free} request's I think you should get a api key.`
+           res.status(429).send({ error: text});
         }
     },
 	standardHeaders: true,
