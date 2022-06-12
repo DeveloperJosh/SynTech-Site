@@ -92,7 +92,7 @@ paypal.payment.execute(paymentId, execute_payment_json, function (error, payment
     } else {
           user = req.session.user
             EmailSchema.updateOne({
-                _id: user,
+                id: user,
                 premium: true
             }, function(err) {
                 if (err) {
