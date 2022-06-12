@@ -24,6 +24,22 @@ const apikey_check = async (req, res) => {
     }
 }
 
+function is_premium(req, res, next) {
+    /// check with database
+    EmailSchema.findOne({
+        _id: req.session.user,
+        premium: true
+    }, (err, premium) => {
+        if (err) {
+            console.log(err)
+        } else if (premium) {
+            next();
+        } else {
+            res.status(403).send({ error: 'You are not a premium user' });
+        }
+    })
+}
+
 const APIlimiter = rateLimit({
 	windowMs: 60 * 60 * 1000,
     max: async (req, res) => {
@@ -68,7 +84,7 @@ api.get('/image', APIlimiter, function(req, res) {
     }
 });
 
-api.get('/key', function(req, res) {
+api.get('/key',is_premium, function(req, res) {
     user = req.session.user
     if (user) {
         const key = EmailSchema.findOne({
