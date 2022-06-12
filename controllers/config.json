@@ -1,6 +1,6 @@
 {
     "version": "1.0.0",
-    "description": "",
+    "description": "SynTech is a website for developers to share their code and learn from each other.",
     "api_limit_paid": "1000",
     "api_limit_free": "100",
     "sampleUrl": false,

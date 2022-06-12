@@ -7,14 +7,26 @@ const EmailSchema = require('./models/login');
 const blogSchema = require('./models/blog');
 const devModeSchema = require('./models/devmode');
 var cookieSession = require('cookie-session');
-const api = require('./api/ends');
+const api = require('./controllers/api/index');
+const admin = require('./controllers/admin/index');
 const makeid = require('./functions/number_gen');
+var logger = require('morgan');
+var bodyParser = require('body-parser');
+const paypal = require('paypal-rest-sdk');
+const { MessageEmbed, WebhookClient } = require('discord.js');
 
-/// TODO:
-/// - add user delete functionality
-/// - make an admin page
-
+const webhookClient = new WebhookClient({ id: process.env.WEBHOOK_ID, token: process.env.WEBHOOK_TOKEN });
 require('dotenv').config();
+
+paypal.configure({
+    'mode': 'live', //sandbox or live
+    'client_id': process.env.PAYPAL_CLIENT_ID,
+    'client_secret': process.env.PAYPAL_CLIENT_SECRET
+  });
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}))
+app.use(logger('dev'));
 
 app.use(cookieSession({
     name: 'session',
@@ -45,7 +57,7 @@ mongoose.connect(url, {
 })
 
 
-app.set('views', path.join(__dirname, 'html'));
+app.set('views', path.join(__dirname, 'views'));
 app.engine('html', require('ejs').renderFile);
 app.set('trust proxy', 1)
 app.use(express.static(__dirname + '/public'));
@@ -215,33 +227,11 @@ router.get('/dashboard', devModeCheck, function(req, res) {
     }
 });
 
-router.get('/admin', function(req, res) {
-    EmailSchema.findOne({
-        _id: req.session.user,
-        admin: true
-    }, function(err, user) {
-        if (err) {
-            console.log(err);
-            res.send('Error: ' + err);
-        } else {
-            if (user) {
-                res.render('admin.html')
-            } else {
-                res.send('Error: You are not an admin');
-            }
-        }
-    })
-});
-
-router.get('/admin/login', function(req, res) {    
-    res.render('admin_login.html')
-});
-
 router.get('/forget', devModeCheck, function(req, res) {
     res.render('forget.html')
 });
 
-router.post('/forget', function(req, res) {
+router.post('/forget', devModeCheck, function(req, res) {
     var email = req.body.email;
     var password = req.body.password;
     var new_password = req.body.new_password;
@@ -292,8 +282,122 @@ router.get('/username', function(req, res) {
     res.send(username);
 });
 
+router.get('/shop', devModeCheck, function(req, res) {
+    if (req.session.user) {
+        res.render('buy.html')
+    } else {
+        res.redirect('/login');
+    }
+});
+
+router.post('/pay', (req, res) => {
+    const create_payment_json = {
+      "intent": "sale",
+      "payer": {
+          "payment_method": "paypal"
+      },
+      "redirect_urls": {
+          "return_url": "http://syntech.lol/success",
+          "cancel_url": "http://syntech.lol/cancel"
+      },
+      "transactions": [{
+          "item_list": {
+              "items": [{
+                  "name": "Premium Account",
+                  "sku": "001",
+                  "price": "5.00",
+                  "currency": "USD",
+                  "quantity": 1
+              }]
+          },
+          "amount": {
+              "currency": "USD",
+              "total": "5.00"
+          },
+          "description": "A premium account will get you 2000+ requests per 15 minutes and top tir support and a badge on your profile and discord name in the server."
+      }]
+};
+  
+paypal.payment.create(create_payment_json, function (error, payment) {
+    if (error) {
+        throw error;
+    } else {
+        for(let i = 0;i < payment.links.length;i++){
+          if(payment.links[i].rel === 'approval_url'){
+            res.redirect(payment.links[i].href);
+          }
+        }
+    }
+  });
+  
+});
+
+router.get('/success', devModeCheck, (req, res) => {
+    const payerId = req.query.PayerID;
+    const paymentId = req.query.paymentId;
+  
+const execute_payment_json = {
+      "payer_id": payerId,
+      "transactions": [{
+          "amount": {
+              "currency": "USD",
+              "total": "5.00"
+          }
+    }]
+};
+  
+paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
+    if (error) {
+          console.log(error.response);
+          throw error;
+    } else {
+          user = req.session.user
+            EmailSchema.updateOne({
+                _id: user,
+                premium: true
+            }, function(err) {
+                if (err) {
+                    console.log(err);
+                    res.send('Error');
+                } else {
+                    const embed = new MessageEmbed()
+                    .setTitle('Account Upgrade')
+                    .setDescription(`${user.username} has upgraded their account to premium!`)
+                    .setColor('#0099ff');
+                
+                    webhookClient.send({
+                    username: `${user.username}`,
+                    avatarURL: 'https://www.iconpacks.net/icons/2/free-store-icon-1977-thumb.png',
+                    embeds: [embed],
+                    });
+                    res.render('success.html')
+                }
+            }
+        );
+      }
+  });
+});
+
+router.get('/cancel', (req, res) => res.send('Cancelled'));
+
+
 app.use('/', router);
 app.use('/api', api);
+app.use('/admin', admin);
+
+app.use((req, res, next) => {
+    res.status(404).render('error.html');
+});
+  
+app.use((error, req, res, next) => {
+      res.status(error.status || 500).send({
+        error: {
+          status: error.status || 500,
+          message: error.message || 'Internal Server Error',
+        },
+    });
+});
+
 app.listen(process.env.PORT || 3000, function(){
     console.log("SynTech is running on port %d in %s mode", this.address().port, app.settings.env);
 });

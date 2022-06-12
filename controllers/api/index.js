@@ -2,10 +2,10 @@ var express = require('express');
 const api = express.Router();
 const app = express();
 const rateLimit  = require('express-rate-limit');
-const find = require('../functions/index');
-const makeid = require('../functions/number_gen');
-const config = require('./config');
-const EmailSchema = require('../models/login');
+const find = require('../../functions/index');
+const makeid = require('../../functions/number_gen');
+const config = require('../config');
+const EmailSchema = require('../../models/login');
 require('dotenv').config();
 
 const apikey_check = async (req, res) => {

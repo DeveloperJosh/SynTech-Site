@@ -26,6 +26,7 @@
     "connect-mongo": "^4.6.0",
     "cookie-parser": "^1.4.6",
     "cookie-session": "^2.0.0",
+    "discord.js": "^13.8.0",
     "dotenv": "^16.0.1",
     "ejs": "^3.1.8",
     "emailjs": "^4.0.0",
@@ -34,13 +35,16 @@
     "express-validator": "^6.14.1",
     "jquery": "^3.6.0",
     "mongoose": "^6.3.5",
+    "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "node-fetch": "^2.6.1",
     "nodemailer": "^6.7.5",
     "nodemon": "^2.0.16",
+    "paypal-rest-sdk": "^1.8.1",
     "postcss": "^8.4.14",
     "postcss-cli": "^9.1.0",
-    "reddit-image-fetcher": "^2.0.11"
+    "reddit-image-fetcher": "^2.0.11",
+    "webhook-discord": "^3.7.8"
   },
   "devDependencies": {
     "tailwindcss": "^3.0.24"
