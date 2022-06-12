@@ -36,8 +36,8 @@ shop.post('/pay', (req, res) => {
           "payment_method": "paypal"
       },
       "redirect_urls": {
-          "return_url": "http://localhost:3000/shop/success",
-          "cancel_url": "http://localhost:3000/shop/cancel"
+          "return_url": "http://syntech.lol/shop/success",
+          "cancel_url": "http://syntech.lol/shop/cancel"
       },
       "transactions": [{
           "item_list": {
