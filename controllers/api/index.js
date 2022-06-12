@@ -1,6 +1,5 @@
 var express = require('express');
 const api = express.Router();
-const app = express();
 const rateLimit  = require('express-rate-limit');
 const find = require('../../functions/index');
 const makeid = require('../../functions/number_gen');
@@ -37,7 +36,7 @@ function is_premium(req, res, next) {
         } else {
             res.status(403).send({ error: 'You are not a premium user' });
         }
-    })
+    });
 }
 
 const APIlimiter = rateLimit({
@@ -61,13 +60,13 @@ const APIlimiter = rateLimit({
     legacyHeaders: false
 })
 
-app.use(express.static(__dirname + '/public'));
+api.use(express.static(__dirname + '/public'));
 
 api.get('/', function(req, res) {
     res.send({ message: 'Welcome to the API', version: config.version});
 });
 
-app.get('/ip', (req, res) => res.send(req.ip))
+api.get('/ip', (req, res) => res.send(req.ip))
 
 api.get('/image', APIlimiter, function(req, res) {
     var meme = req.query.subreddit;

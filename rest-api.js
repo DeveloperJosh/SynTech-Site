@@ -9,20 +9,11 @@ const devModeSchema = require('./models/devmode');
 var cookieSession = require('cookie-session');
 const api = require('./controllers/api/index');
 const admin = require('./controllers/admin/index');
+const shop = require('./controllers/shop/index');
 const makeid = require('./functions/number_gen');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-const paypal = require('paypal-rest-sdk');
-const { MessageEmbed, WebhookClient } = require('discord.js');
-
-const webhookClient = new WebhookClient({ id: process.env.WEBHOOK_ID, token: process.env.WEBHOOK_TOKEN });
 require('dotenv').config();
-
-paypal.configure({
-    'mode': 'live', //sandbox or live
-    'client_id': process.env.PAYPAL_CLIENT_ID,
-    'client_secret': process.env.PAYPAL_CLIENT_SECRET
-  });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}))
@@ -283,108 +274,10 @@ router.get('/username', function(req, res) {
     res.send(username);
 });
 
-router.get('/shop', devModeCheck, function(req, res) {
-    if (req.session.user) {
-        res.render('buy.html')
-    } else {
-        res.redirect('/login');
-    }
-});
-
-router.post('/pay', (req, res) => {
-    const create_payment_json = {
-      "intent": "sale",
-      "payer": {
-          "payment_method": "paypal"
-      },
-      "redirect_urls": {
-          "return_url": "http://syntech.lol/success",
-          "cancel_url": "http://syntech.lol/cancel"
-      },
-      "transactions": [{
-          "item_list": {
-              "items": [{
-                  "name": "Premium Account",
-                  "sku": "001",
-                  "price": "5.00",
-                  "currency": "USD",
-                  "quantity": 1
-              }]
-          },
-          "amount": {
-              "currency": "USD",
-              "total": "5.00"
-          },
-          "description": "A premium account will get you 2000+ requests per 15 minutes and top tir support and a badge on your profile and discord name in the server."
-      }]
-};
-  
-paypal.payment.create(create_payment_json, function (error, payment) {
-    if (error) {
-        throw error;
-    } else {
-        for(let i = 0;i < payment.links.length;i++){
-          if(payment.links[i].rel === 'approval_url'){
-            res.redirect(payment.links[i].href);
-          }
-        }
-    }
-  });
-  
-});
-
-router.get('/success', devModeCheck, (req, res) => {
-    const payerId = req.query.PayerID;
-    const paymentId = req.query.paymentId;
-  
-const execute_payment_json = {
-      "payer_id": payerId,
-      "transactions": [{
-          "amount": {
-              "currency": "USD",
-              "total": "5.00"
-          }
-    }]
-};
-  
-paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
-    if (error) {
-          console.log(error.response);
-          throw error;
-    } else {
-          user = req.session.user
-            EmailSchema.updateOne({
-                _id: user,
-                premium: true
-            }, function(err) {
-                if (err) {
-                    console.log(err);
-                    res.send('Error');
-                } else {
-                    const embed = new MessageEmbed()
-                    .setTitle('Account Upgrade')
-                    .setDescription(`${user.username} has upgraded their account to premium!`)
-                    .setColor('#0099ff');
-                
-                    webhookClient.send({
-                    username: `${user.username}`,
-                    avatarURL: 'https://www.iconpacks.net/icons/2/free-store-icon-1977-thumb.png',
-                    embeds: [embed],
-                    });
-                    res.render('success.html')
-                }
-            }
-        );
-      }
-  });
-});
-
-router.get('/cancel', (req, res) => res.send('Cancelled'));
-
-
 app.use('/', router);
 app.use('/api', api);
 app.use('/admin', admin);
+app.use('/shop', shop);
 
 app.use((req, res, next) => {
     res.status(404).send({ error: 'Not found' });

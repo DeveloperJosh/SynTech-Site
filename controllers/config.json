@@ -10,5 +10,9 @@
         "shortName": "SynTech",
         "startUrl": "/",
         "domain": "syntech.lol"
+    },
+    "payment": {
+        "currency": "USD",
+        "price": "5.00"
     }
 }
