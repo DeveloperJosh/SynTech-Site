@@ -6,11 +6,13 @@ const mongoose = require('mongoose');
 const EmailSchema = require('./models/login');
 const blogSchema = require('./models/blog');
 const devModeSchema = require('./models/devmode');
+const tokenSchema = require('./models/token');
 var cookieSession = require('cookie-session');
 const api = require('./controllers/api/index');
 const admin = require('./controllers/admin/index');
 const shop = require('./controllers/shop/index');
 const makeid = require('./functions/number_gen');
+const sender = require('./functions/email');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 require('dotenv').config();
@@ -176,6 +178,7 @@ router.post('/register', function(req, res) {
     let username = req.body.username;
     let password = req.body.password;
     let confirmPassword = req.body.confirmPassword;
+    let token = makeid(60);
     EmailSchema.findOne({
         _id: email
     }, function(err, user) {
@@ -192,14 +195,22 @@ router.post('/register', function(req, res) {
                         username: username,
                         password: password,
                         admin: false,
-                        premium: false
+                        premium: false,
+                        verified: false,
                     });
+                    /// save token too
                     newUser.save(function(err) {
                         if (err) {
                             console.log(err);
                             res.send('Error: ' + err);
                         } else {
                             req.session.user = newUser;
+                            let newToken = new tokenSchema({
+                                _id: email,
+                                token: token
+                            })
+                            newToken.save()
+                            sender(email, 'Welcome to SynTech', `Welcome to SynTech!\n\nYou have successfully registered for SynTech.\n\nYou need to verify your account at http://${req.hostname}/verify/${token}\n\nThank you for using SynTech!`)
                             res.redirect('/dashboard');
                         }
                     });
@@ -210,6 +221,54 @@ router.post('/register', function(req, res) {
         }
     })
 }); 
+
+router.get('/verify/:token', function(req, res) {
+    let token = req.params.token;
+    try {
+        /// find user by id and token and update verified to true and delete token
+        tokenSchema.findOne({
+            token: token
+        }, function(err, user) {
+            if (err) {
+                console.log(err);
+                res.send('Error: ' + err);
+            } else {
+                if (user) {
+                    EmailSchema.findOneAndUpdate({
+                        _id: req.session.user._id
+                    }, {
+                        verified: true
+                    }, function(err, user) {
+                        if (err) {
+                            console.log(err);
+                            res.send('Error: ' + err);
+                        }
+                    }
+                    )
+                    tokenSchema.deleteOne({
+                        _id: req.session.user._id
+                    }, function(err, user) {
+                        if (err) {
+                            console.log(err);
+                            res.send('Error: ' + err);
+                        }
+                    }
+                    )
+                    /// send message then redirect to dashboard
+                    sender(req.session.user._id, 'Account Verified', `Your account has been verified.\n\nThank you for using SynTech!`)
+                    res.redirect('/dashboard');
+                } else {
+                    res.send('Invalid token')
+                }
+            }
+        }
+        )
+    }
+    catch (err) {
+        console.log(err)
+    }
+
+});
 
 router.get('/dashboard', devModeCheck, function(req, res) {
     if (req.session.user) {

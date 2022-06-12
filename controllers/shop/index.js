@@ -36,13 +36,13 @@ shop.post('/pay', (req, res) => {
           "payment_method": "paypal"
       },
       "redirect_urls": {
-          "return_url": "http://syntech.lol/shop/success",
+          "return_url": "http://localhost:3000/shop/success",
           "cancel_url": "http://syntech.lol/shop/cancel"
       },
       "transactions": [{
           "item_list": {
               "items": [{
-                  "name": "Premium Account",
+                  "name": "Developer",
                   "sku": "001",
                   "price": config.payment.price,
                   "currency": config.payment.currency,
@@ -91,14 +91,19 @@ paypal.payment.execute(paymentId, execute_payment_json, function (error, payment
           throw error;
     } else {
           user = req.session.user
+          //// update user to premium
             EmailSchema.updateOne({
-                id: user,
-                premium: true
+                _id: user._id
+            }, {
+                $set: {
+                    premium: true
+                }
             }, function(err) {
                 if (err) {
                     console.log(err);
-                    res.send('Error');
+                    res.send('Error: Please contact support with your receipt number and the error message.');
                 } else {
+                    //// send message to discord
                     const embed = new MessageEmbed()
                     .setTitle('Account Upgrade')
                     .setDescription(`${user.username} has upgraded their account to premium!`)
@@ -112,10 +117,9 @@ paypal.payment.execute(paymentId, execute_payment_json, function (error, payment
                     });
                     res.render('success.html')
                 }
-            }
-        );
-      }
-  });
+           });
+        }
+     });
 });
 
 shop.get('/cancel', (req, res) => res.send('Cancelled'));

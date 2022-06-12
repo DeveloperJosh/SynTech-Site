@@ -24,8 +24,11 @@ const EmailSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    verified: {
+        type: Boolean,
+        default: false
+    },
     apikey: NotString
-
 })
 /// save to syn collection
 module.exports = mongoose.model('logins', EmailSchema)
