@@ -200,7 +200,8 @@ router.post('/register', function(req, res) {
                         _id: email,
                         username: username,
                         password: password,
-                        admin: false
+                        admin: false,
+                        premium: false
                     });
                     newUser.save(function(err) {
                         if (err) {
