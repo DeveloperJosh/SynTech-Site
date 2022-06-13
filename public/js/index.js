@@ -57,3 +57,20 @@ function logout() {
     xhttp.open("GET", "/verified", true);
     xhttp.send();
   }
+
+  function admin() {
+    window.location.href = "/admin";
+  }
+
+  function is_admin_user() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        if (this.responseText == "true") {
+          document.getElementById("admin").innerHTML = "<button class=\"btn btn-primary\" onclick=\"admin()\">Admin Panel</button>";
+        }
+      }
+    }
+    xhttp.open("GET", "/admin_user", true);
+    xhttp.send();
+  }

@@ -192,6 +192,13 @@ router.get('/verified', function(req, res) {
     res.send(verified);
 });
 
+router.get('/admin_user', function(req, res) {
+    admin_user = req.session.user;
+    admin_user = admin_user.admin;
+    res.send(admin_user);
+});
+    
+
 app.use('/', router);
 app.use('/api', api);
 app.use('/admin', admin);
