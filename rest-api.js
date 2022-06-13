@@ -5,14 +5,15 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const EmailSchema = require('./models/login');
 const blogSchema = require('./models/blog');
-const devModeSchema = require('./models/devmode');
 const tokenSchema = require('./models/token');
 var cookieSession = require('cookie-session');
 const api = require('./controllers/api/index');
 const admin = require('./controllers/admin/index');
 const shop = require('./controllers/shop/index');
+const user = require('./controllers/user/index');
 const makeid = require('./functions/number_gen');
 const sender = require('./functions/email');
+const devModeCheck = require('./functions/devmodecheck');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 require('dotenv').config();
@@ -55,27 +56,12 @@ app.engine('html', require('ejs').renderFile);
 app.set('trust proxy', 1)
 app.use(express.static(__dirname + '/public'));
 
-function devModeCheck(req, res, next) {
-    devModeSchema.findOne({
-        _id: req.hostname
-    }, (err, devMode) => {
-        if (err) {
-            console.log(err)
-        } else if (devMode) {
-            if (devMode.dev_mode) {
-                res.render('devmode.html')
-            } else {
-                next()
-            }
-        } else {
-            const newDevMode = new devModeSchema({
-                _id: req.hostname,
-                dev_mode: false
-            })
-            newDevMode.save()
-            res.redirect('/')
-        }
-    })
+function is_logged_in(req, res, next) {
+    if (req.session.user) {
+        next();
+    } else {
+        res.status(403).send({ error: 'You are not logged in' });
+    }
 }
 
 router.get('/', devModeCheck, function(req, res) {
@@ -121,39 +107,6 @@ router.delete('/blog/:id', function(req, res) {
     })
 });
 
-router.get('/login', devModeCheck, function(req, res) {
-        res.render('login.html')
-});
-
-router.post('/login', function(req, res) {
-    let email = req.body.email;
-    if (email) {
-        EmailSchema.findOne({
-            _id: email
-        }, (err, user) => {
-            if (err) {
-                console.log(err)
-            } else if (user) {
-                if (user.password === req.body.password) {
-                    req.session.user = user
-                    res.redirect('/dashboard')
-                } else {
-                    res.redirect('/login')
-                }
-            } else {
-                res.redirect('/login')
-            }
-        })
-    } else {
-        res.redirect('/login')
-    }
-});
-
-router.get('/logout', function(req, res) {
-    req.session = null;
-    res.redirect('/');
-});
-
 router.delete('/delete', function(req, res) {
     // TODO: add user delete functionality
     user = req.session.user._id
@@ -168,63 +121,7 @@ router.delete('/delete', function(req, res) {
     )
 });
 
-
-router.get('/register', devModeCheck, function(req, res) {
-    res.render('register.html')
-});
-
-router.post('/register', function(req, res) {
-    let email = req.body.email;
-    email = email.toLowerCase();
-    let username = req.body.username;
-    let password = req.body.password;
-    let confirmPassword = req.body.confirmPassword;
-    let token = makeid(60);
-    /// make email lowercase
-    EmailSchema.findOne({
-        _id: email
-    }, function(err, user) {
-        if (err) {
-            console.log(err);
-            res.send('Error: ' + err);
-        } else {
-            if (user) {
-                res.send('Email already exists');
-            } else {
-                if (password === confirmPassword) {
-                    let newUser = new EmailSchema({
-                        _id: email,
-                        username: username,
-                        password: password,
-                        admin: false,
-                        premium: false,
-                        verified: false,
-                    });
-                    /// save token too
-                    newUser.save(function(err) {
-                        if (err) {
-                            console.log(err);
-                            res.send('Error: ' + err);
-                        } else {
-                            req.session.user = newUser;
-                            let newToken = new tokenSchema({
-                                _id: email,
-                                token: token
-                            })
-                            newToken.save()
-                            sender(email, 'Welcome to SynTech', `Welcome to SynTech!\n\nYou have successfully registered for SynTech.\n\nYou need to verify your account at http://${req.hostname}/verify/${token}\n\nThank you for using SynTech!`)
-                            res.redirect('/dashboard');
-                        }
-                    });
-                } else {
-                    res.send('Passwords do not match');
-                }
-            }
-        }
-    })
-}); 
-
-router.get('/verify/:token', function(req, res) {
+router.get('/verify/:token', is_logged_in, function(req, res) {
     let token = req.params.token;
     try {
         /// find user by id and token and update verified to true and delete token
@@ -272,52 +169,6 @@ router.get('/verify/:token', function(req, res) {
 
 });
 
-router.get('/dashboard', devModeCheck, function(req, res) {
-    if (req.session.user) {
-        res.render('dashboard.html')
-    } else {
-        res.redirect('/login');
-    }
-});
-
-router.get('/forget', devModeCheck, function(req, res) {
-    res.render('forget.html')
-});
-
-router.post('/forget', devModeCheck, function(req, res) {
-    var email = req.body.email;
-    var password = req.body.password;
-    var new_password = req.body.new_password;
-    EmailSchema.findOne({
-        _id: email,
-        password: password
-    }, function(err, user) {
-        if (err) {
-            console.log(err);
-            res.send('Error');
-        } else {
-            if (user) {
-                EmailSchema.updateOne({
-                    _id: email
-                }, {
-                    $set: {
-                        password: new_password
-                    }
-                }, function(err) {
-                    if (err) {
-                        console.log(err);
-                        res.send('Error');
-                    } else {
-                        res.redirect('/login');
-                    }
-                });
-            } else {
-                res.send('Error');
-            }
-        }
-    })
-});
-
 router.get('/info', function(req, res) {
     console.log(req.session);
     res.send(req.session.user);
@@ -345,6 +196,7 @@ app.use('/', router);
 app.use('/api', api);
 app.use('/admin', admin);
 app.use('/shop', shop);
+app.use('/user', user);
 
 app.use((req, res, next) => {
     res.status(404).send({ error: 'Not found' });

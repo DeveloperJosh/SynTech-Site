@@ -3,12 +3,12 @@
   <head>
     <title>Login Page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
     <script src="https://kit.fontawesome.com/c9cc288421.js" crossorigin="anonymous"></script>
-    <link rel="icon" href="images/logo.png">
+    <link rel="icon" href="/images/logo.png">
   </head>
-  <script src="bootstrap/js/bootstrap.min.js"></script>
+  <script src="/bootstrap/js/bootstrap.min.js"></script>
   <body style="background-color: #141615">
     <nav class="navbar navbar-expand-lg bg-dark">
       <div class="container-fluid">
@@ -25,10 +25,10 @@
               <a class="nav-link text-white" href="/blog">Blog</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white" href="/login">Login</a>
+              <a class="nav-link text-white" href="/user/login">Login</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white" href="/register">Register</a>
+              <a class="nav-link text-white" href="/user/register">Register</a>
             </li>
           </ul>
         </div>
@@ -46,7 +46,7 @@
           <div class="card card-signin my-5">
             <div class="card-body">
               <h5 class="card-title text-center">Sign In</h5>
-              <form class="form-signin" action="/login" method="post">
+              <form class="form-signin" action="/user/login" method="post">
                 <div class="form-label-group">
                   <label for="inputEmail">Email</label>
                   <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email" required autofocus>

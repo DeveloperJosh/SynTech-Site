@@ -1,5 +1,5 @@
 function logout() {
-    window.location.href = "/logout";
+    window.location.href = "/user/logout";
   }
   function delete_account_button() {
     // using delete request to delete the account
@@ -19,7 +19,7 @@ function logout() {
     }
 
   function new_password() {
-    window.location.href = "/forget";
+    window.location.href = "/user/forget";
   }
 
   function getEmail() {
