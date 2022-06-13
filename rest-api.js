@@ -175,10 +175,12 @@ router.get('/register', devModeCheck, function(req, res) {
 
 router.post('/register', function(req, res) {
     let email = req.body.email;
+    email = email.toLowerCase();
     let username = req.body.username;
     let password = req.body.password;
     let confirmPassword = req.body.confirmPassword;
     let token = makeid(60);
+    /// make email lowercase
     EmailSchema.findOne({
         _id: email
     }, function(err, user) {
@@ -331,6 +333,12 @@ router.get('/username', function(req, res) {
     username = req.session.user;
     username = username.username;
     res.send(username);
+});
+
+router.get('/verified', function(req, res) {
+    verified = req.session.user;
+    verified = verified.verified;
+    res.send(verified);
 });
 
 app.use('/', router);

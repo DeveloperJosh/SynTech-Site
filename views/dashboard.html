@@ -19,57 +19,16 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"
     ></script>
     <link rel="stylesheet" type="text/css" href="css/main.css" />
-    <script>
-      function logout() {
-        window.location.href = "/logout";
-      }
-      function delete_account_button() {
-        // using delete request to delete the account
-        if (confirm("Are you sure you want to delete your account?")) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-          if (this.readyState == 4 && this.status == 200) {
-            window.location.href = "/";
-          }
-        };
-        xhttp.open("DELETE", "/delete", true);
-        xhttp.send();
-        window.location.href = "/";
-      } else {  
-        return;
-         }
-        }
-
-      function new_password() {
-        window.location.href = "/forget";
-      }
-
-      function getEmail() {
-        // get email from /info
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-          if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("email").innerHTML = this.responseText;
-          }
-        };
-        xhttp.open("GET", "/getemail", true);
-        xhttp.send();
-      }
-      function getUsername() {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-          if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("username").innerHTML = this.responseText;
-          }
-        };
-        xhttp.open("GET", "/username", true);
-        xhttp.send();
-      }
-    </script>
   </head>
+  <script src="js/index.js"></script>
   <script src="bootstrap/js/bootstrap.min.js"></script>
   <body style="background-color: #141615">
     <!--Dynamic NavBar without menu-->
+    <div id="verified">
+    <script>
+      is_verified();
+    </script>
+    </div>
     <nav class="navbar navbar-expand-lg bg-dark">
       <div class="container-fluid">
         <a class="navbar-brand text-white" href="/">SynTech</a>

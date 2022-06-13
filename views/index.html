@@ -15,13 +15,16 @@
     <link rel="icon" href="images/logo.png">
 </head>
 <script src="bootstrap/js/bootstrap.min.js"></script>
+<script src="https://kit.fontawesome.com/c9cc288421.js" crossorigin="anonymous"></script>
 <body style="background-color: #141615">
   <!--Dynamic NavBar without menu-->
   <nav class="navbar navbar-expand-lg bg-dark">
     <div class="container-fluid">
       <a class="navbar-brand text-white" href="/">SynTech</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+        <span class="navbar-toggler-icon">
+          <i class="fas fa-bars" style="color:rgb(255, 255, 255); font-size:28px;"></i>
+      </span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
@@ -57,7 +60,7 @@
     <script>
       var message = "Welcome to SynTech!";
       var speed = 100;
-
+    
       function typeWriter() {
         if (message.length > 0) {
           document.getElementById("message").innerHTML += message.charAt(0);
