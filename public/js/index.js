@@ -62,15 +62,28 @@ function logout() {
     window.location.href = "/admin";
   }
 
-  function is_admin_user() {
+  function getAllUrlParams() {
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    return urlParams;
+  }
+
+  function getUrlParam(parameter, defaultvalue) {
+    var urlparam = defaultvalue;
+    if (window.location.href.indexOf(parameter) > -1) {
+      urlparam = getAllUrlParams().get(parameter);
+    }
+    return urlparam;
+  }
+
+  function find_blog_by_id() {
+    var blog_id = getUrlParam("id", "0");
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
       if (this.readyState == 4 && this.status == 200) {
-        if (this.responseText == "true") {
-          document.getElementById("admin").innerHTML = "<button class=\"btn btn-primary\" onclick=\"admin()\">Admin Panel</button>";
-        }
+        document.getElementById("blog_content").innerHTML = this.responseText;
       }
     }
-    xhttp.open("GET", "/admin_user", true);
+    xhttp.open("GET", "/blog/" + blog_id, true);
     xhttp.send();
   }

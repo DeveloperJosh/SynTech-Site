@@ -43,14 +43,14 @@ if (email) {
                 req.session.user = user
                 res.redirect('/user')
             } else {
-                res.redirect('/login')
+                res.redirect('/user/login')
             }
         } else {
-            res.redirect('/login')
+            res.redirect('/user/login')
         }
     })
 } else {
-    res.redirect('/login')
+    res.redirect('/user/login')
 }
 });
 
@@ -150,6 +150,26 @@ user.post('/forget', devModeCheck, function(req, res) {
 user.get('/logout', function(req, res) {
     req.session = null;
     res.redirect('/');
+});
+
+user.post('/is_password_correct', function(req, res) {
+    let email = req.body.email;
+    let password = req.body.password;
+    EmailSchema.findOne({
+        _id: email,
+        password: password
+    }, function(err, user) {
+        if (err) {
+            console.log(err);
+            res.send('false');
+        } else {
+            if (user) {
+                res.send('true');
+            } else {
+                res.send('false');
+            }
+        }
+    })
 });
 
 module.exports = user;

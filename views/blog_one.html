@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blogs</title>
+    <meta name="description" content="The blog page of SynTech">
+    <meta name="author" content="SynTech Blogs">
+    <!---Bootstrap CSS from file-->
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" />
+    <!---Custom CSS from file-->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="icon" href="/images/logo.png">
+</head>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<body style="background-color: #141615">
+  <nav class="navbar navbar-expand-lg bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand text-white" href="/">SynTech</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active text-white" aria-current="home" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/blog">Blog</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/user/login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/user/register">Register</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <br>
+  <div class="container">
+    <!--make a post-->
+    <div class="row">
+        <script>
+            /// get id from url
+            var url = window.location.href;
+            var id = url.substring(url.lastIndexOf('/') + 1);
+            // show post with id using xmlhttp request
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var post = JSON.parse(this.responseText);
+                    console.log(post);
+                    document.getElementById("post_title").innerHTML = post.title;
+                    document.getElementById("post_content").innerHTML = post.body;
+                    document.getElementById("post_author").innerHTML = 'Author: ' + post.author;
+                    
+                }
+            };
+            xhttp.open("GET", "/blog/id/" + id, true);
+            xhttp.send();
+        </script>
+        <div id="posts">
+            '<div class="col-sm-12">
+                <article class="card" style="background-color: #202422">
+                  <header class="card-header">
+                    <h1 class="card-title text-center text-white" id="post_title"></h1>
+                  </header>
+                  <div class="card-body">
+                    <p class="card-text text-center text-white" id="post_content"></p>
+                  </div>
+                  <footer class="card-footer">
+                    <p class="card-text text-center text-white" id="post_author"></p>
+                  </footer>
+                </article>
+              </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

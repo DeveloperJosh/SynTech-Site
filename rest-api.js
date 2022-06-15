@@ -107,6 +107,29 @@ router.delete('/blog/:id', function(req, res) {
     })
 });
 
+router.get('/blog/:id', function(req, res) {
+    blogSchema.findOne({
+        _id: req.params.id
+    }).then((blog) => {
+        res.render('blog_one.html')
+    }
+    ).catch((err) => {
+        console.log(err)
+    })
+});
+
+router.get('/blog/id/:id', function(req, res) {
+    blogSchema.findOne({
+        _id: req.params.id
+    }).then((blog) => {
+        res.send(blog)
+    }
+    ).catch((err) => {
+        console.log(err)
+    })
+});
+
+
 router.delete('/delete', function(req, res) {
     // TODO: add user delete functionality
     user = req.session.user._id
@@ -154,7 +177,7 @@ router.get('/verify/:token', is_logged_in, function(req, res) {
                     }
                     )
                     /// send message then redirect to dashboard
-                    sender(req.session.user._id, 'Account Verified', `Your account has been verified.\n\nThank you for using SynTech!`)
+                    sender(req.session.user._id, 'Account Verified', `Your account has been verified, Please log back in to remove banner.\n\nThank you for using SynTech!`)
                     res.redirect('/dashboard');
                 } else {
                     res.send('Invalid token')
@@ -197,7 +220,6 @@ router.get('/admin_user', function(req, res) {
     admin_user = admin_user.admin;
     res.send(admin_user);
 });
-    
 
 app.use('/', router);
 app.use('/api', api);
