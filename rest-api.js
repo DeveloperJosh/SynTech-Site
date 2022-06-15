@@ -69,20 +69,6 @@ router.get('/', devModeCheck, function(req, res) {
     res.render('index.html')
 });
 
-router.delete('/delete', function(req, res) {
-    // TODO: add user delete functionality
-    user = req.session.user._id
-    EmailSchema.deleteOne({
-        _id: user
-    }).then(() => {
-        res.redirect('/')
-    }
-    ).catch((err) => {
-        console.log(err)
-    }
-    )
-});
-
 router.get('/verify/:token', is_logged_in, function(req, res) {
     let token = req.params.token;
     try {

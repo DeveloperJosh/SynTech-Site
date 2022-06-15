@@ -10,7 +10,7 @@ function logout() {
         window.location.href = "/";
       }
     };
-    xhttp.open("DELETE", "/delete", true);
+    xhttp.open("DELETE", "/user/delete", true);
     xhttp.send();
     window.location.href = "/";
   } else {  

@@ -172,4 +172,18 @@ user.post('/is_password_correct', function(req, res) {
     })
 });
 
+user.delete('/delete', function(req, res) {
+    // TODO: add user delete functionality
+    user = req.session.user._id
+    EmailSchema.deleteOne({
+        _id: user
+    }).then(() => {
+        res.redirect('/')
+    }
+    ).catch((err) => {
+        console.log(err)
+    }
+    )
+});
+
 module.exports = user;
