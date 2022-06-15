@@ -11,6 +11,7 @@ const api = require('./controllers/api/index');
 const admin = require('./controllers/admin/index');
 const shop = require('./controllers/shop/index');
 const user = require('./controllers/user/index');
+const blog = require('./controllers/blog/index');
 const makeid = require('./functions/number_gen');
 const sender = require('./functions/email');
 const devModeCheck = require('./functions/devmodecheck');
@@ -67,68 +68,6 @@ function is_logged_in(req, res, next) {
 router.get('/', devModeCheck, function(req, res) {
     res.render('index.html')
 });
-
-router.get('/blog', devModeCheck, function(req, res) {
-        res.render('blog.html')
-});
-
-router.post('/blog', function(req, res) {
-    const blog = new blogSchema({
-        _id: makeid(32),
-        title: req.body.title,
-        body: req.body.body,
-        author: req.session.user.username,
-        date: new Date().toLocaleString(),
-        comments: []
-    })
-    blog.save().then(() => {
-        res.redirect('/blog')
-    }
-    ).catch((err) => {
-        console.log(err)
-    })
-});
-
-router.get('/blog/all', function(req, res) {
-    blogSchema.find().then((blogs) => {
-        res.send(blogs)
-    }).catch((err) => {
-        console.log(err)
-    })
-});
-
-router.delete('/blog/:id', function(req, res) {
-    blogSchema.deleteOne({
-        _id: req.params.id
-    }).then(() => {
-        res.send('deleted')
-    }).catch((err) => {
-        console.log(err)
-    })
-});
-
-router.get('/blog/:id', function(req, res) {
-    blogSchema.findOne({
-        _id: req.params.id
-    }).then((blog) => {
-        res.render('blog_one.html')
-    }
-    ).catch((err) => {
-        console.log(err)
-    })
-});
-
-router.get('/blog/id/:id', function(req, res) {
-    blogSchema.findOne({
-        _id: req.params.id
-    }).then((blog) => {
-        res.send(blog)
-    }
-    ).catch((err) => {
-        console.log(err)
-    })
-});
-
 
 router.delete('/delete', function(req, res) {
     // TODO: add user delete functionality
@@ -226,6 +165,7 @@ app.use('/api', api);
 app.use('/admin', admin);
 app.use('/shop', shop);
 app.use('/user', user);
+app.use('/blog', blog);
 
 app.use((req, res, next) => {
     res.status(404).send({ error: 'Not found' });
