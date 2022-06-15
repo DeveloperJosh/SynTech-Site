@@ -20,9 +20,9 @@ function is_logged_in(req, res, next) {
 }
 
 paypal.configure({
-    'mode': 'sandbox', //sandbox or live
-    'client_id': process.env.TESTING_PAYPAL_CLIENT_ID,
-    'client_secret': process.env.TESTING_PAYPAL_CLIENT_SECRET
+    'mode': 'live', //sandbox or live
+    'client_id': process.env.PAYPAL_CLIENT_ID,
+    'client_secret': process.env.PAYPAL_CLIENT_SECRET
   });
 
 shop.get('/', is_logged_in, function(req, res) {
