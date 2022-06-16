@@ -1,8 +1,5 @@
 var express = require('express');
 const router = express.Router();
-const EmailSchema = require('../../models/login');
-const tokenSchema = require('../../models/token');
-const sender = require('../../functions/email');
 const devModeCheck = require('../../functions/devmodecheck');
 const config = require('../config');
 
@@ -16,56 +13,37 @@ function is_logged_in(req, res, next) {
     }
 }
 
+router.use((req, res, next) => {
+    /// find and update the viewer count if it exists if not create a new one
+    viewers.findOne({
+        _id: req.hostname
+    }, (err, viewer) => {
+        if (err) {
+            console.log(err)
+        } else if (viewer) {
+            viewers.findOneAndUpdate({
+                _id: req.hostname
+            }, {
+                $inc: { viewer: +1 }
+            }, (err, viewer) => {
+                if (err) {
+                    console.log(err)
+                }
+            })
+        } else {
+            const newViewer = new viewers({
+                _id: req.hostname,
+                viewer: 1
+            })
+            newViewer.save()
+        }
+    })
+    next();
+});
+    
+
 router.get('/', devModeCheck, function(req, res) {
     res.render('index.html')
-});
-
-router.get('/verify/:token', is_logged_in, function(req, res) {
-    let token = req.params.token;
-    try {
-        /// find user by id and token and update verified to true and delete token
-        tokenSchema.findOne({
-            token: token
-        }, function(err, user) {
-            if (err) {
-                console.log(err);
-                res.send('Error: ' + err);
-            } else {
-                if (user) {
-                    EmailSchema.findOneAndUpdate({
-                        _id: req.session.user._id
-                    }, {
-                        verified: true
-                    }, function(err, user) {
-                        if (err) {
-                            console.log(err);
-                            res.send('Error: ' + err);
-                        }
-                    }
-                    )
-                    tokenSchema.deleteOne({
-                        _id: req.session.user._id
-                    }, function(err, user) {
-                        if (err) {
-                            console.log(err);
-                            res.send('Error: ' + err);
-                        }
-                    }
-                    )
-                    /// send message then redirect to dashboard
-                    sender(req.session.user._id, 'Account Verified', `Your account has been verified, Please log back in to remove banner.\n\nThank you for using SynTech!`)
-                    res.redirect('/dashboard');
-                } else {
-                    res.send('Invalid token')
-                }
-            }
-        }
-        )
-    }
-    catch (err) {
-        console.log(err)
-    }
-
 });
 
 router.get('/info', function(req, res) {

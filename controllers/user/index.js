@@ -1,11 +1,10 @@
 var express = require('express');
 const user = express.Router();
-const rateLimit  = require('express-rate-limit');
-const find = require('../../functions/index');
 const makeid = require('../../functions/number_gen');
 const devModeCheck = require('../../functions/devmodecheck');
 const config = require('../config');
-const EmailSchema = require('../../models/login');
+const tokenSchema = require('../../models/token');
+const sender = require('../../functions/email');
 require('dotenv').config();
 
 user.use(express.static(__dirname + '.../public'));
@@ -97,7 +96,7 @@ user.post('/register', function(req, res) {
                                 token: token
                             })
                             newToken.save()
-                            sender(email, 'Welcome to SynTech', `Welcome to SynTech!\n\nYou have successfully registered for SynTech.\n\nYou need to verify your account at http://${req.hostname}/verify/${token}\n\nThank you for using SynTech!`)
+                            sender(email, 'Welcome to SynTech', `Welcome to SynTech!\n\nYou have successfully registered for SynTech.\n\nYou need to verify your account at http://${req.hostname}/user/verify/${token}\n\nThank you for using SynTech!`)
                             res.redirect('/dashboard');
                         }
                     });
@@ -108,6 +107,54 @@ user.post('/register', function(req, res) {
         }
     })
 }); 
+
+user.get('/verify/:token', is_logged_in, function(req, res) {
+    let token = req.params.token;
+    try {
+        /// find user by id and token and update verified to true and delete token
+        tokenSchema.findOne({
+            token: token
+        }, function(err, user) {
+            if (err) {
+                console.log(err);
+                res.send('Error: ' + err);
+            } else {
+                if (user) {
+                    EmailSchema.findOneAndUpdate({
+                        _id: req.session.user._id
+                    }, {
+                        verified: true
+                    }, function(err, user) {
+                        if (err) {
+                            console.log(err);
+                            res.send('Error: ' + err);
+                        }
+                    }
+                    )
+                    tokenSchema.deleteOne({
+                        _id: req.session.user._id
+                    }, function(err, user) {
+                        if (err) {
+                            console.log(err);
+                            res.send('Error: ' + err);
+                        }
+                    }
+                    )
+                    /// send message then redirect to dashboard
+                    sender(req.session.user._id, 'Account Verified', `Your account has been verified, Please log back in to remove banner.\n\nThank you for using SynTech!`)
+                    res.redirect('/dashboard');
+                } else {
+                    res.send('Invalid token')
+                }
+            }
+        }
+        )
+    }
+    catch (err) {
+        console.log(err)
+    }
+
+});
 
 user.get('/forget', devModeCheck, function(req, res) {
     res.render('forget.html')
