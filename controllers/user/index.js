@@ -3,6 +3,7 @@ const user = express.Router();
 const makeid = require('../../functions/number_gen');
 const devModeCheck = require('../../functions/devmodecheck');
 const config = require('../config');
+const EmailSchema = require('../../models/login');
 const tokenSchema = require('../../models/token');
 const sender = require('../../functions/email');
 require('dotenv').config();
@@ -97,7 +98,7 @@ user.post('/register', function(req, res) {
                             })
                             newToken.save()
                             sender(email, 'Welcome to SynTech', `Welcome to SynTech!\n\nYou have successfully registered for SynTech.\n\nYou need to verify your account at http://${req.hostname}/user/verify/${token}\n\nThank you for using SynTech!`)
-                            res.redirect('/dashboard');
+                            res.redirect('/user');
                         }
                     });
                 } else {
@@ -142,7 +143,7 @@ user.get('/verify/:token', is_logged_in, function(req, res) {
                     )
                     /// send message then redirect to dashboard
                     sender(req.session.user._id, 'Account Verified', `Your account has been verified, Please log back in to remove banner.\n\nThank you for using SynTech!`)
-                    res.redirect('/dashboard');
+                    res.redirect('/user');
                 } else {
                     res.send('Invalid token')
                 }
@@ -154,6 +155,25 @@ user.get('/verify/:token', is_logged_in, function(req, res) {
         console.log(err)
     }
 
+});
+
+user.get('/resend', is_logged_in, function(req, res) {
+    /// send email with token
+    tokenSchema.findOne({
+        _id: req.session.user._id
+    }, function(err, user) {
+        if (err) {
+            console.log(err);
+            res.send('Error: ' + err);
+        } else {
+            if (user) {
+                sender(req.session.user._id, 'Verify Account', `Please verify your account at http://${req.hostname}/user/verify/${user.token}\n\nThank you for using SynTech!`)
+                res.redirect('/user');
+            } else {
+                res.send('Invalid token')
+            }
+        }
+    });
 });
 
 user.get('/forget', devModeCheck, function(req, res) {

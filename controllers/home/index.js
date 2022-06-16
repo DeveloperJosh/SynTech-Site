@@ -11,36 +11,7 @@ function is_logged_in(req, res, next) {
     } else {
         res.status(403).send({ error: 'You are not logged in' });
     }
-}
-
-router.use((req, res, next) => {
-    /// find and update the viewer count if it exists if not create a new one
-    viewers.findOne({
-        _id: req.hostname
-    }, (err, viewer) => {
-        if (err) {
-            console.log(err)
-        } else if (viewer) {
-            viewers.findOneAndUpdate({
-                _id: req.hostname
-            }, {
-                $inc: { viewer: +1 }
-            }, (err, viewer) => {
-                if (err) {
-                    console.log(err)
-                }
-            })
-        } else {
-            const newViewer = new viewers({
-                _id: req.hostname,
-                viewer: 1
-            })
-            newViewer.save()
-        }
-    })
-    next();
-});
-    
+};   
 
 router.get('/', devModeCheck, function(req, res) {
     res.render('index.html')
