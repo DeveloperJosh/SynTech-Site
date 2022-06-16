@@ -60,8 +60,6 @@ const APIlimiter = rateLimit({
     legacyHeaders: false
 })
 
-api.use(express.static(__dirname + '/public'));
-
 api.get('/', function(req, res) {
     res.send({ message: 'Welcome to the API', version: config.version});
 });

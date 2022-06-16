@@ -14,7 +14,7 @@ function is_logged_in(req, res, next) {
 };   
 
 router.get('/', devModeCheck, function(req, res) {
-    res.render('index.html')
+    res.render('index')
 });
 
 router.get('/info', function(req, res) {

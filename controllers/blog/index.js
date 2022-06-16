@@ -18,7 +18,7 @@ function is_logged_in(req, res, next) {
 }
 
 blog.get('/', devModeCheck, function(req, res) {
-    res.render('blog.html')
+    res.render('blog')
 });
 
 blog.post('/post', function(req, res) {
@@ -60,7 +60,7 @@ blog.get('/:id', function(req, res) {
 blogSchema.findOne({
     _id: req.params.id
 }).then((blog) => {
-    res.render('blog_one.html')
+    res.render('blog_one')
 }
 ).catch((err) => {
     console.log(err)

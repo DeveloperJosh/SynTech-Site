@@ -29,7 +29,7 @@ app.use(function (req, res, next) {
     res.setHeader('Powered-By', 'SynTech')
     res.setHeader('Made-By', 'Blue at SynTech')
     next()
-  })
+})
 
 let url = process.env.URL;
 mongoose.connect(url, {
@@ -44,7 +44,7 @@ mongoose.connect(url, {
 
 
 app.set('views', path.join(__dirname, 'views'));
-app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'ejs');
 app.set('trust proxy', 1)
 app.use(express.static(__dirname + '/public'));
 

@@ -26,7 +26,7 @@ paypal.configure({
   });
 
 shop.get('/', is_logged_in, function(req, res) {
-    res.render('buy.html');
+    res.render('shop');
 });
 
 shop.post('/pay', (req, res) => {
@@ -115,7 +115,7 @@ paypal.payment.execute(paymentId, execute_payment_json, function (error, payment
                     avatarURL: 'https://www.iconpacks.net/icons/2/free-store-icon-1977-thumb.png',
                     embeds: [embed],
                     });
-                    res.render('success.html')
+                    res.render('success')
                 }
            });
         }

@@ -23,7 +23,7 @@ function is_admin(req, res, next) {
 }
 
 admin.get('/', is_admin, function(req, res) {
-     res.render('admin.html')
+     res.render('admin')
 });
 
 admin.get('/config', is_admin, function(req, res) {

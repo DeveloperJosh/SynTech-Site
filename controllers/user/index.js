@@ -20,14 +20,14 @@ function is_logged_in(req, res, next) {
 
 user.get('/', devModeCheck, function(req, res) {
     if (req.session.user) {
-        res.render('dashboard.html')
+        res.render('dashboard')
     } else {
-        res.render('login.html')
+        res.render('login')
     }
 });
 
 user.get('/login', devModeCheck, function(req, res) {
-    res.render('login.html')
+    res.render('login')
 });
 
 user.post('/login', function(req, res) {
@@ -55,7 +55,7 @@ if (email) {
 });
 
 user.get('/register', devModeCheck, function(req, res) {
-    res.render('register.html')
+    res.render('register')
 });
 
 user.post('/register', function(req, res) {
@@ -177,7 +177,7 @@ user.get('/resend', is_logged_in, function(req, res) {
 });
 
 user.get('/forget', devModeCheck, function(req, res) {
-    res.render('forget.html')
+    res.render('forget')
 });
 
 user.post('/forget', devModeCheck, function(req, res) {
