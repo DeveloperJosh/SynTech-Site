@@ -14,16 +14,12 @@ function is_logged_in(req, res, next) {
     if (req.session.user) {
         next();
     } else {
-        res.status(403).send({ error: 'You are not logged in' });
+        res.render('login');
     }
 }
 
-user.get('/', devModeCheck, function(req, res) {
-    if (req.session.user) {
-        res.render('dashboard')
-    } else {
-        res.render('login')
-    }
+user.get('/', devModeCheck, is_logged_in, function(req, res) {
+    res.render('dashboard');
 });
 
 user.get('/login', devModeCheck, function(req, res) {
@@ -214,32 +210,12 @@ user.post('/forget', devModeCheck, function(req, res) {
     })
 });
 
-user.get('/logout', function(req, res) {
+user.get('/logout', is_logged_in, function(req, res) {
     req.session = null;
     res.redirect('/');
 });
 
-user.post('/is_password_correct', function(req, res) {
-    let email = req.body.email;
-    let password = req.body.password;
-    EmailSchema.findOne({
-        _id: email,
-        password: password
-    }, function(err, user) {
-        if (err) {
-            console.log(err);
-            res.send('false');
-        } else {
-            if (user) {
-                res.send('true');
-            } else {
-                res.send('false');
-            }
-        }
-    })
-});
-
-user.delete('/delete', function(req, res) {
+user.delete('/delete', is_logged_in, function(req, res) {
     // TODO: add user delete functionality
     user = req.session.user._id
     EmailSchema.deleteOne({

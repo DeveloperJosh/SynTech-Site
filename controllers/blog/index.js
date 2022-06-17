@@ -46,6 +46,33 @@ blogSchema.find().then((blogs) => {
 })
 });
 
+/// not working atm
+blog.get('/comments', function(req, res) {
+blogSchema.find().then((blogs) => {
+    info = {
+        body: blogs.comments.body
+    }
+    res.send(info)
+}).catch((err) => {
+    console.log(err)
+  })
+});
+        
+
+blog.post('/comment/:id', function(req, res) {
+    blogSchema.findOneAndUpdate({ _id: req.params.id }, { $push: { comments: {
+        _id: makeid(32),
+        body: req.body.body,
+        author: req.session.user.username
+    } } }, { new: true }).then((blog) => {
+        res.send(blog)
+    }
+    ).catch((err) => {
+        console.log(err)
+    }
+    )
+});
+
 blog.delete('/:id', function(req, res) {
 blogSchema.deleteOne({
     _id: req.params.id

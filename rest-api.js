@@ -56,7 +56,11 @@ app.use('/user', user);
 app.use('/blog', blog);
 
 app.use((req, res, next) => {
-    res.status(404).send({ error: 'Not found' });
+    /// error page
+    res.status(404).render('404', {
+        title: '404',
+        message: 'Page not found'
+    })
 });
   
 app.use((error, req, res, next) => {

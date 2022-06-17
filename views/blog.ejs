@@ -80,6 +80,26 @@
                         // footer text class
                         '<p class="card-text text-center text-white">Author: ' + data[i].author + '</p>' +
                       '</footer>' +
+                      /// comment dropdown class (dropdown-toggle)
+                      '<div class="dropdown">' +
+                        // dropdown button class
+                        '<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+                          // dropdown button text class
+                          'Comments' +
+                        '</button>' +
+                        // dropdown menu class
+                        '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">' +
+                          // dropdown menu text class
+                          '<a class="dropdown-item" href="#">' + data[i].comments + '</a>' +
+                        '</div>' +
+                      '</div>' +
+                    '</article>' +
+                      '<script>' +
+                        $(".dropdown").hover(function() {
+                          $(this).find(".dropdown-menu").stop(true, true).delay(200).fadeIn(500);
+                        }, function() {
+                          $(this).find(".dropdown-menu").stop(true, true).delay(200).fadeOut(500);
+                        })  +
                     '</article>' +
                   '</div>' +
                   '<br>'
