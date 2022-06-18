@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
-const apikey_check = async (req, res) => {
+const limiter = async (req, res) => {
     if (req.headers.authorization) {
         const apikey = req.headers.authorization;
         const key = await EmailSchema.findOne({
@@ -25,10 +25,39 @@ const apikey_check = async (req, res) => {
     }
 }
 
+function api_key_check(req, res, next) {
+    if (req.headers.authorization) {
+        const apikey = req.headers.authorization;
+        const key = EmailSchema.findOne({
+            apikey: apikey,
+        });
+        if (key) {
+            next();
+        } else {
+            res.status(401).json({
+                message: 'Invalid API key',
+            });
+        }
+    } else {
+        res.status(401).json({
+            message: 'Invalid API key',
+        });
+    }
+}
+
+
 function getJoke() {
     const jokeList = fs.readFileSync(path.join(__dirname, './list/dadjokes.txt'), 'utf8').split('\n');
     const randomJoke = jokeList[Math.floor(Math.random() * jokeList.length)];
     return randomJoke;
+}
+
+function getNSFW() {
+    const nsfwList = fs.readFileSync(path.join(__dirname, './list/nsfw.txt'), 'utf8').split('\n');
+    const randomNSFW = nsfwList[Math.floor(Math.random() * nsfwList.length)];
+    /// remove the /r/ from the end of the string
+    const nsfw = randomNSFW.slice(0, -1);
+    return nsfw;
 }
 
 function is_premium(req, res, next) {
@@ -50,14 +79,14 @@ function is_premium(req, res, next) {
 const APIlimiter = rateLimit({
 	windowMs: 60 * 60 * 1000,
     max: async (req, res) => {
-        if (await apikey_check(req, res) === true) {
+        if (await limiter(req, res) === true) {
             return config.api_limit_paid;
         } else {
             return config.api_limit_free;
         }
     },
     handler: (req, res) => {
-        if (apikey_check(req, res) === true) {
+        if (limiter(req, res) === true) {
             res.status(429).send({ error: 'Too Many Requests, Please try again in 1 hour.' });
         } else {
            text = `Woah there, You used ${config.api_limit_free} request's I think you should get a api key.`
@@ -88,6 +117,11 @@ api.get('/image', APIlimiter, function(req, res) {
         });
     }
 });
+
+api.get('/nsfw', api_key_check, APIlimiter, function(req, res) {
+   res.send({ url: getNSFW() });
+});
+
 
 api.get('/dadjokes', APIlimiter, function(req, res) {
     res.send({ joke: getJoke() });
