@@ -13,7 +13,7 @@ function is_logged_in(req, res, next) {
     if (req.session.user) {
         next();
     } else {
-        res.status(403).send({ error: 'You are not logged in' });
+        res.status(403).redirect('/user');
     }
 }
 
@@ -44,33 +44,29 @@ blogSchema.find().then((blogs) => {
 }).catch((err) => {
     console.log(err)
 })
-});
+});   
 
-/// not working atm
-blog.get('/comments', function(req, res) {
-blogSchema.find().then((blogs) => {
-    info = {
-        body: blogs.comments.body
-    }
-    res.send(info)
-}).catch((err) => {
-    console.log(err)
-  })
+blog.get('/add_comment/:id', is_logged_in, function(req, res) {
+    blogSchema.findById(req.params.id).then((blog) => {
+        res.render("add_comment", {
+            url: req.params.id,
+            })
+    }).catch((err) => {
+        console.log(err)
+    })
 });
-        
 
 blog.post('/comment/:id', function(req, res) {
     blogSchema.findOneAndUpdate({ _id: req.params.id }, { $push: { comments: {
         _id: makeid(32),
-        body: req.body.body,
+        body: req.body.comment,
         author: req.session.user.username
     } } }, { new: true }).then((blog) => {
-        res.send(blog)
+        res.send("Added comment")
     }
     ).catch((err) => {
         console.log(err)
-    }
-    )
+    })
 });
 
 blog.delete('/:id', function(req, res) {
@@ -79,17 +75,6 @@ blogSchema.deleteOne({
 }).then(() => {
     res.send('deleted')
 }).catch((err) => {
-    console.log(err)
-})
-});
-
-blog.get('/:id', function(req, res) {
-blogSchema.findOne({
-    _id: req.params.id
-}).then((blog) => {
-    res.render('blog_one')
-}
-).catch((err) => {
     console.log(err)
 })
 });

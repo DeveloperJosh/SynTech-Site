@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Adding Comment</title>
+        <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" />
+        <!---Custom CSS from file-->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+        <link rel="icon" href="/images/logo.png">
+    </head>
+    <!---Custom js-->
+    <script src="/js/main.js"></script>
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <body style="background-color: #141615">
+        <!---Cool looking comment from-->
+        <div class="container">
+            <div class="jumbotron text-center text-white">
+                <h1 class="display-4">Adding Comment</h1>
+                <p class="lead">Please fill out the form below to add a comment.</p>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <!---post with url -->
+                    <form action="/blog/comment/<%= url %>" method="post">
+                        <div class="form-group">
+                            <label for="comment">Comment</label>
+                            <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <!---go back button-->
+                        <a href="/blog/" class="btn btn-primary">Go Back</a>
+                    </form>
+                </div>
+            </div>
+         </div>
+    </body>
+</html>

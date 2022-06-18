@@ -5,6 +5,8 @@ const find = require('../../functions/index');
 const makeid = require('../../functions/number_gen');
 const config = require('../config');
 const EmailSchema = require('../../models/login');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 const apikey_check = async (req, res) => {
@@ -21,6 +23,12 @@ const apikey_check = async (req, res) => {
     } else {
         return false;
     }
+}
+
+function getJoke() {
+    const jokeList = fs.readFileSync(path.join(__dirname, './list/jokes.txt'), 'utf8').split('\n');
+    const randomJoke = jokeList[Math.floor(Math.random() * jokeList.length)];
+    return randomJoke;
 }
 
 function is_premium(req, res, next) {
@@ -79,6 +87,10 @@ api.get('/image', APIlimiter, function(req, res) {
            res.send({ url: posts });
         });
     }
+});
+
+api.get('/dadjoke', APIlimiter, function(req, res) {
+    res.send({ joke: getJoke() });
 });
 
 api.get('/key',is_premium, function(req, res) {
