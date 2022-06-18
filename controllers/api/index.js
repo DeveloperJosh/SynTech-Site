@@ -26,7 +26,7 @@ const apikey_check = async (req, res) => {
 }
 
 function getJoke() {
-    const jokeList = fs.readFileSync(path.join(__dirname, './list/jokes.txt'), 'utf8').split('\n');
+    const jokeList = fs.readFileSync(path.join(__dirname, './list/dadjokes.txt'), 'utf8').split('\n');
     const randomJoke = jokeList[Math.floor(Math.random() * jokeList.length)];
     return randomJoke;
 }
@@ -89,7 +89,7 @@ api.get('/image', APIlimiter, function(req, res) {
     }
 });
 
-api.get('/dadjoke', APIlimiter, function(req, res) {
+api.get('/dadjokes', APIlimiter, function(req, res) {
     res.send({ joke: getJoke() });
 });
 
