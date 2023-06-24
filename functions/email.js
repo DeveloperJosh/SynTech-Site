@@ -8,7 +8,7 @@ let transporter = nodemailer.createTransport({
   secure: true, // use TLS
   auth: {
     user: "noreply@syntech.dev",
-    pass: "Gunner0099"
+    pass: "Password was not real stop trying to login with the filler password."
   },
 });
 
